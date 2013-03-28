@@ -5,7 +5,6 @@
 
 angular.module('AngularStomp', []).
     factory('ngstomp', function($rootScope) {
-        Stomp.WebSocketClass = SockJS;
         var stompClient = {};
 
         function NGStomp(url) {
