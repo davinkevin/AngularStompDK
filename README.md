@@ -23,3 +23,13 @@ function FrontPageController($scope, $routeParams, ngstomp) {
     }, function(){}, '/');
 ```
 
+Example HTML:
+```html
+<div class="row" ng-controller="FrontPageController">
+    <div class="span8 offset1">
+        <h1>Messages</h1>
+        <p ng-repeat="message in messages">{{message}}</p>
+    </div>
+</div>
+```
+
