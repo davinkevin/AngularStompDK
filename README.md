@@ -24,6 +24,7 @@ function FrontPageController($scope, $routeParams, ngstomp) {
 ```
 
 Example HTML:
+
 ```html
 <div class="row" ng-controller="FrontPageController">
     <div class="span8 offset1">
