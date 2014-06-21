@@ -1,0 +1,27 @@
+{
+  "name": "Podcast_Server",
+  "version": "1.0.0",
+  "description": "Podcast Server",
+  "dependencies": {
+    "gulp": "^3.6.2",
+    "gulp-rename": "^1.2.0",
+    "gulp-uglify" : "*",
+    "bower" : "*"
+  },
+  "devDependencies": {
+    
+  },
+  "scripts": {
+    "postinstall" : "./node_modules/bower/bin/bower install"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/davinkevin/AngularStomp.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/davinkevin/AngularStomp/issues"
+  },
+  "homepage": "https://github.com/davinkevin/AngularStomp"
+}

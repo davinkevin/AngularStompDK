@@ -1,0 +1,19 @@
+{
+    "name": "AngularStompDK",
+    "version": "0.0.2",
+    "main": "angular-stomp.js",
+    "ignore": [
+        "source",
+        "spec",
+        ".bowerrc",
+        ".gitignore",
+        "bower.json",
+        "gulpfile.js",
+        "package.json",
+        "README.md"
+    ],
+    "dependencies": {
+        "angular": ">=1.2.0",
+        "stomp-websocket": "~2.3.0"
+    }
+}
