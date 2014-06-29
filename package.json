@@ -6,6 +6,7 @@
     "gulp": "^3.6.2",
     "gulp-rename": "^1.2.0",
     "gulp-uglify" : "*",
+    "gulp-ngmin" : "*",
     "bower" : "*"
   },
   "devDependencies": {

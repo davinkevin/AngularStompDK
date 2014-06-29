@@ -1,15 +1,17 @@
 // Include gulp and Our Plugins
 var gulp = require('gulp'),
     rename = require('gulp-rename'),
-    uglify = require('gulp-uglify');
+    uglify = require('gulp-uglify'),
+    ngmin = require('gulp-ngmin');
 
 var jsLocation = 'lib/*.js', jsDestination = 'dist/';
 
 gulp.task('scripts', function() {
     gulp.src(jsLocation)
     .pipe(rename('angular-stomp.min.js'))
+    .pipe(ngmin())
     .pipe(uglify({
-            mangle : false
+            mangle : true
         }))
     .pipe(gulp.dest(jsDestination));
 });
