@@ -7,7 +7,7 @@ Usage
 -----
 This class relies on stomp.js that can be found at: https://github.com/jmesnil/stomp-websocket/
 
-1. Add the dependency to your Angular application :  
+Add the dependency to your Angular application :
 
 ```js
     angular.module('myApp', [
@@ -15,7 +15,7 @@ This class relies on stomp.js that can be found at: https://github.com/jmesnil/s
     ])
 ```
 
-2. Configure the ngStomp to connect to your web-socket system : 
+Configure the ngStomp to connect to your web-socket system :
 
 ```js
     angular.module('myApp')
@@ -27,7 +27,7 @@ This class relies on stomp.js that can be found at: https://github.com/jmesnil/s
         });
 ```
 
-3. Use it inside your controller (or everywhere you want !)
+Use it inside your controller (or everywhere you want !)
 
 ```js
     angular.controller('myController', function($scope, ngstomp) {
@@ -44,7 +44,7 @@ This class relies on stomp.js that can be found at: https://github.com/jmesnil/s
      });
 ```
 
-4. You can chain multiple subscribe 
+You can chain multiple subscribe
 
 ```js
  angular.controller('myController', function($scope, ngstomp) {
@@ -61,7 +61,7 @@ This class relies on stomp.js that can be found at: https://github.com/jmesnil/s
  });
 ```
 
-5. Don't forget to unsubscribe your callback when the $scope is detroy (or the call will append even after the scope has been detroyed)
+Don't forget to unsubscribe your callback when the $scope is detroy (or the call will append even after the scope has been detroyed)
 
 ```js
  angular.controller('myController', function($scope, ngstomp) {
@@ -87,7 +87,7 @@ This class relies on stomp.js that can be found at: https://github.com/jmesnil/s
  });
 ```
 
-6. Or you can give the $scope to the subscribe method to enable the auto-unsubscribe
+Or you can give the $scope to the subscribe method to enable the auto-unsubscribe
 
 ```js
  angular.controller('myController', function($scope, ngstomp) {
