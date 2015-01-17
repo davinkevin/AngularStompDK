@@ -1,12 +1,13 @@
 {
-  "name": "Podcast_Server",
+  "name": "AngularStompDK",
   "version": "1.0.0",
-  "description": "Podcast Server",
+  "description": "Angular Stomp DK",
   "dependencies": {
     "gulp": "^3.6.2",
     "gulp-rename": "^1.2.0",
     "gulp-uglify" : "*",
     "gulp-ngmin" : "*",
+    "gulp-plumber" : "*",
     "bower" : "*"
   },
   "devDependencies": {

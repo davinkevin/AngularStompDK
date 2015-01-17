@@ -2,12 +2,14 @@
 var gulp = require('gulp'),
     rename = require('gulp-rename'),
     uglify = require('gulp-uglify'),
+    plumber = require('gulp-plumber'),
     ngmin = require('gulp-ngmin');
 
 var jsLocation = 'lib/*.js', jsDestination = 'dist/';
 
 gulp.task('scripts', function() {
     gulp.src(jsLocation)
+    .pipe(plumber())
     .pipe(rename('angular-stomp.min.js'))
     .pipe(ngmin())
     .pipe(uglify({
