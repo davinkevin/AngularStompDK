@@ -103,3 +103,27 @@ Or you can give the $scope to the subscribe method to enable the auto-unsubscrib
     }
  });
 ```
+
+And now (since v0.1.0) you can send back to the Web-Socket information : 
+
+```js
+ angular.controller('myController', function($scope, ngstomp) {
+
+    var items = [];
+
+    ngstomp
+        .subscribe('/topic/item', whatToDoWhenMessageComming, $scope);
+
+    function whatToDoWhenMessageComming(message) {
+        items.push(JSON.parse(message.body));
+    }
+
+    var objectToSend = { message : 'Hello Web-Socket'},
+        stompHeaders = {headers1 : 'xx', headers2 : 'yy'};
+         
+    $scope.sendDataToWS = function(message) {
+        ngstomp
+            .send('/topic/item/message', objectToSend, stompHeaders);
+    }
+ });
+```
