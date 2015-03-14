@@ -19,7 +19,9 @@ gulp.task('scripts', function() {
     .pipe(ngAnnotate())
     .pipe(rename('angular-stomp.es5.js'))
     .pipe(gulp.dest(jsDestination))
-    .pipe(uglify())
+    .pipe(uglify({
+            mangle : false
+        }))
     .pipe(rename('angular-stomp.min.js'))
     .pipe(sourcemaps.write('.'))
     .pipe(gulp.dest(jsDestination));
@@ -27,6 +29,7 @@ gulp.task('scripts', function() {
 
 // Watch Files For Changes
 gulp.task('watch', function() {
+    gulp.start('scripts');
     gulp.watch(jsLocation, ['scripts']);
 });
 

@@ -61,9 +61,12 @@ var ngstompProvider = (function () {
             }
         },
         $get: {
-            value: function $get($q, $log, $rootScope) {
+
+            /* @ngInject */
+
+            value: ["$q", "$log", "$rootScope", function $get($q, $log, $rootScope) {
                 return new ngStompWebSocket(this.settings, $q, $log, $rootScope);
-            }
+            }]
         }
     });
 
