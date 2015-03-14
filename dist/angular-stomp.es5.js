@@ -158,13 +158,10 @@ var ngStompWebSocket = (function () {
         },
         $stompSubscribe: {
             value: function $stompSubscribe(queue, callback) {
-                var _this = this;
-
-                var _arguments = arguments;
-
-                var subscription = this.stompClient.subscribe(queue, function () {
-                    callback.apply(_this.stompClient, _arguments);
-                    _this.$digestStompAction();
+                var self = this;
+                var subscription = self.stompClient.subscribe(queue, function () {
+                    callback.apply(self.stompClient, arguments);
+                    self.$digestStompAction();
                 });
                 this.connections.push({ url: queue, subscription: subscription });
             }
