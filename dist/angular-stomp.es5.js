@@ -186,7 +186,7 @@ var ngStompWebSocket = (function () {
         },
         $digestStompAction: {
             value: function $digestStompAction() {
-                !$rootScope.$$phase && $rootScope.$apply();
+                !this.$rootScope.$$phase && this.$rootScope.$apply();
             }
         },
         unRegisterScopeOnDestroy: {
