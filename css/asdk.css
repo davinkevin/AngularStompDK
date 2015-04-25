@@ -1,0 +1,56 @@
+.header {
+    display : block;
+}
+.header:before, .header:after {
+    content: " ";
+    display: table;
+}
+.header:after {
+    clear: both;
+}
+
+.jumbotron {
+    height: 400px;
+    color: white;
+    text-shadow: #444 0 1px 1px;
+    background: url('../img/night_scene.jpg') repeat-x center center;
+}
+
+.author {
+    position: absolute;
+    top: 0;
+    left: 0;
+    font-size: 0.90em;
+    color: black;
+    font-weight: 500;
+}
+
+.author-img, .author-text {
+    display: inline-block;
+    margin: 15px 0 0 15px;
+}
+
+.author img {
+    height: 30px;
+    border-radius: 50%;
+}
+
+.btn.btn-jumbo {
+    color : white;
+    border-color: white;
+    background: transparent;
+    margin-left: 10px;
+}
+
+.feature i {
+    font-size: 36px;
+}
+
+body {
+    font-size : 18px
+}
+
+img.monochrome {
+    filter: grayscale(100%);
+    -webkit-filter: grayscale(100%);
+}
