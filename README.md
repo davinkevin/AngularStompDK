@@ -1,5 +1,7 @@
 AngularStomp
 ============
+
+[![Join the chat at https://gitter.im/davinkevin/AngularStompDK](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/davinkevin/AngularStompDK?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Build Status](https://travis-ci.org/davinkevin/AngularStompDK.svg?branch=master)](https://travis-ci.org/davinkevin/AngularStompDK) [![Coverage Status](https://coveralls.io/repos/davinkevin/AngularStompDK/badge.svg?branch=master)](https://coveralls.io/r/davinkevin/AngularStompDK?branch=master) [![Code Climate](https://codeclimate.com/github/davinkevin/AngularStompDK/badges/gpa.svg)](https://codeclimate.com/github/davinkevin/AngularStompDK) 
 
 Angular service to Web-Stomp
