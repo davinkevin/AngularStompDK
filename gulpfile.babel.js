@@ -8,6 +8,7 @@ import babel from 'gulp-babel';
 import sourcemaps from 'gulp-sourcemaps';
 import wrap from 'gulp-wrap-js';
 import packagejson from './package.json';
+import coveralls from 'gulp-coveralls';
 
 let jsLocation = 'lib/*.js',
     jsDestination = 'dist/';
@@ -34,6 +35,12 @@ gulp.task('scripts', function() {
 gulp.task('watch', function() {
     gulp.start('scripts');
     gulp.watch(jsLocation, ['scripts']);
+});
+
+
+gulp.task('coveralls', () => {
+    gulp.src('coverage/lcov.info')
+        .pipe(coveralls());
 });
 
 // Default Task
