@@ -1,33 +1,41 @@
 {
   "name": "AngularStompDK",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "Angular Stomp DK",
   "dependencies": {
-    "gulp": "^3.6.2",
+    "bower" : "*",
+    "babel": "^5.4.7",
+    "gulp": "^3.9.0",
     "gulp-rename": "^1.2.0",
     "gulp-uglify" : "*",
-    "gulp-ngmin" : "*",
     "gulp-plumber" : "*",
     "gulp-babel": "^4.0.0",
-    "gulp-wrap": "^0.11.0",
+    "gulp-wrap-js": "^0.2.1",
     "gulp-sourcemaps": "^1.5.0",
-    "gulp-ng-annotate": "^0.5.2",
-    "bower" : "*"
+    "gulp-ng-annotate": "^0.5.2"
   },
   "devDependencies": {
-    
+    "karma": "*",
+    "karma-babel-preprocessor": "~5.1.0",
+    "karma-cli": "*",
+    "karma-coverage": "^0.4.2",
+    "karma-jasmine": "^0.3.6",
+    "karma-phantomjs-launcher": "*",
+    "phantomjs": "^1.9.17"
   },
   "scripts": {
-    "postinstall" : "./node_modules/bower/bin/bower install"
+    "postinstall" : "./node_modules/bower/bin/bower install",
+    "test": "node ./node_modules/karma/bin/karma start ./karma.conf.js --reporters coverage --single-run",
+    "test-tdd": "node ./node_modules/karma/bin/karma start ./karma.conf.js"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/davinkevin/AngularStompDK.git"
   },
-  "author": "",
+  "author": "Davin Kevin",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/davinkevin/AngularStomp/issues"
   },
-  "homepage": "https://github.com/davinkevin/AngularStomp"
+  "homepage": "http://davinkevin.github.io/AngularStompDK/"
 }

@@ -2,3 +2,4 @@
 *.iml
 bower_components/
 node*/
+coverage
