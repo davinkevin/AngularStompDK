@@ -8,5 +8,5 @@ before_script:
 
 script: npm test
 
-after_success
+after_success:
 - gulp coveralls
