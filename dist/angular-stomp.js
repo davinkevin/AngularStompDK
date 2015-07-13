@@ -1,4 +1,4 @@
-/*! AngularStompDK v0.2.4 */
+/*! AngularStompDK v0.2.5 */
 (function () {
     'use strict';
     var _createClass = function () {
@@ -114,10 +114,10 @@
                 }
             },
             subscribe: {
-                value: function subscribe(url, callback, scope) {
+                value: function subscribe(url, callback, header, scope) {
                     var _this = this;
                     this.promiseResult.then(function () {
-                        _this.$stompSubscribe(url, callback);
+                        _this.$stompSubscribe(url, callback, header || {});
                         _this.unRegisterScopeOnDestroy(scope, url);
                     });
                     return this;
@@ -155,12 +155,12 @@
                 }
             },
             $stompSubscribe: {
-                value: function $stompSubscribe(queue, callback) {
+                value: function $stompSubscribe(queue, callback, header) {
                     var self = this;
                     var subscription = self.stompClient.subscribe(queue, function () {
                         callback.apply(self.stompClient, arguments);
                         self.$digestStompAction();
-                    });
+                    }, header);
                     this.connections.push({
                         url: queue,
                         subscription: subscription

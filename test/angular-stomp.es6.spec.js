@@ -151,7 +151,7 @@ describe('angular-stomp-dk', () => {
 
             ngstomp.promiseResult = $q.when({});
             ngstomp
-                .subscribe('/url', callback, fakeScope);
+                .subscribe('/url', callback, {}, fakeScope);
             $rootScope.$apply();
 
             expect(stompClient.subscribe).toHaveBeenCalled();
@@ -168,6 +168,35 @@ describe('angular-stomp-dk', () => {
             ngstomp.promiseResult = $q.when({});
             ngstomp
                 .subscribe('/url', function(){});
+            $rootScope.$apply();
+
+            expect(stompClient.subscribe).toHaveBeenCalled();
+            expect(ngstomp.connections.length).toBe(1);
+        });
+
+        it('should subscribe to a topic with custom header', () => {
+            let fakeScope = jasmine.createSpyObj('fakeScope', ['$on']),
+                callback = jasmine.createSpy('callback');
+
+            ngstomp.promiseResult = $q.when({});
+            ngstomp
+                .subscribe('/url', callback, {key: 'value'}, fakeScope);
+            $rootScope.$apply();
+
+            expect(stompClient.subscribe).toHaveBeenCalled();
+            expect(stompClient.subscribe.calls.mostRecent().args[0]).toBe('/url');
+            stompClient.subscribe.calls.mostRecent().args[1]();
+            expect(callback).toHaveBeenCalled();
+            expect(ngstomp.connections.length).toBe(1);
+            expect(fakeScope.$on).toHaveBeenCalled();
+            expect(fakeScope.$on.calls.mostRecent().args[1]).toBeDefined();
+            fakeScope.$on.calls.mostRecent().args[1]();
+        });
+
+        it('should subscribe to a topic without scope but with a custom header', () => {
+            ngstomp.promiseResult = $q.when({});
+            ngstomp
+                .subscribe('/url', function(){}, {field: "value"});
             $rootScope.$apply();
 
             expect(stompClient.subscribe).toHaveBeenCalled();
@@ -220,7 +249,7 @@ describe('angular-stomp-dk', () => {
                 $rootScope.$apply();
 
                 expect(stompClient.send).toHaveBeenCalledWith('/url', {}, "{\"key\":\"key\",\"value\":\"value\"}");
-            })
+            });
 
         });
 
