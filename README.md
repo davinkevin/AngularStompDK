@@ -47,16 +47,19 @@ Use it inside your controller (or everywhere you want !)
      });
 ```
 
-You can chain multiple subscribe
+You can chain multiple subscribe and add headers to your subscription :
 
 ```js
  angular.controller('myController', function($scope, ngstomp) {
     
-    var items = [];
+    var items = [], 
+        headers = {
+        foo : 'bar'            
+    };
     
     ngstomp
         .subscribe('/topic/item', whatToDoWhenMessageComming)
-        .subscribe('/queue/message', whatToDoWhenMessageComming);
+        .subscribe('/queue/message', whatToDoWhenMessageComming, headers);
             
     function whatToDoWhenMessageComming(message) {
         items.push(JSON.parse(message.body));
@@ -69,11 +72,14 @@ Don't forget to unsubscribe your callback when the $scope is detroy (or the call
 ```js
  angular.controller('myController', function($scope, ngstomp) {
     
-    var items = [];
+    var items = [], 
+        headers = {
+            foo : 'bar'            
+        };
     
     ngstomp
         .subscribe('/topic/item', whatToDoWhenMessageComming)
-        .subscribe('/queue/message', whatToDoWhenMessageComming);
+        .subscribe('/queue/message', whatToDoWhenMessageComming, headers);
         
     $scope.$on('$destroy', function() {
         ngstomp
@@ -95,11 +101,14 @@ Or you can give the $scope to the subscribe method to enable the auto-unsubscrib
 ```js
  angular.controller('myController', function($scope, ngstomp) {
 
-    var items = [];
+    var items = [], 
+        headers = {
+            foo : 'bar'            
+        };
 
     ngstomp
-        .subscribe('/topic/item', whatToDoWhenMessageComming, $scope)
-        .subscribe('/queue/message', whatToDoWhenMessageComming, $scope);
+        .subscribe('/topic/item', whatToDoWhenMessageComming, {}, $scope)
+        .subscribe('/queue/message', whatToDoWhenMessageComming, headers, $scope);
 
     function whatToDoWhenMessageComming(message) {
         items.push(JSON.parse(message.body));
@@ -107,7 +116,7 @@ Or you can give the $scope to the subscribe method to enable the auto-unsubscrib
  });
 ```
 
-And now (since v0.1.0) you can send back to the Web-Socket information : 
+And now (since v0.1.0) you can send back information to the Web-Socket : 
 
 ```js
  angular.controller('myController', function($scope, ngstomp) {

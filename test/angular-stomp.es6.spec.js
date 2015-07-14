@@ -150,8 +150,7 @@ describe('angular-stomp-dk', () => {
                 callback = jasmine.createSpy('callback');
 
             ngstomp.promiseResult = $q.when({});
-            ngstomp
-                .subscribe('/url', callback, {}, fakeScope);
+            ngstomp.subscribe('/url', callback, {}, fakeScope);
             $rootScope.$apply();
 
             expect(stompClient.subscribe).toHaveBeenCalled();
@@ -166,8 +165,7 @@ describe('angular-stomp-dk', () => {
 
         it('should subscribe to a topic without scope', () => {
             ngstomp.promiseResult = $q.when({});
-            ngstomp
-                .subscribe('/url', function(){});
+            ngstomp.subscribe('/url', function(){});
             $rootScope.$apply();
 
             expect(stompClient.subscribe).toHaveBeenCalled();
@@ -176,11 +174,11 @@ describe('angular-stomp-dk', () => {
 
         it('should subscribe to a topic with custom header', () => {
             let fakeScope = jasmine.createSpyObj('fakeScope', ['$on']),
-                callback = jasmine.createSpy('callback');
+                callback = jasmine.createSpy('callback'),
+                headers = {key: 'value'};
 
             ngstomp.promiseResult = $q.when({});
-            ngstomp
-                .subscribe('/url', callback, {key: 'value'}, fakeScope);
+            ngstomp.subscribe('/url', callback, headers, fakeScope);
             $rootScope.$apply();
 
             expect(stompClient.subscribe).toHaveBeenCalled();
@@ -190,32 +188,33 @@ describe('angular-stomp-dk', () => {
             expect(ngstomp.connections.length).toBe(1);
             expect(fakeScope.$on).toHaveBeenCalled();
             expect(fakeScope.$on.calls.mostRecent().args[1]).toBeDefined();
+            expect(stompClient.subscribe.calls.mostRecent().args[2]).toBe(headers);
             fakeScope.$on.calls.mostRecent().args[1]();
         });
 
         it('should subscribe to a topic without scope but with a custom header', () => {
+            let headers = {field: "value"};
+
             ngstomp.promiseResult = $q.when({});
-            ngstomp
-                .subscribe('/url', function(){}, {field: "value"});
+            ngstomp.subscribe('/url', function(){}, headers);
             $rootScope.$apply();
 
             expect(stompClient.subscribe).toHaveBeenCalled();
+            expect(stompClient.subscribe.calls.mostRecent().args[2]).toBe(headers);
             expect(ngstomp.connections.length).toBe(1);
         });
 
         it('should unsubscribe', () => {
             let subscription = jasmine.createSpyObj('subscription', ['unsubscribe']);
             stompClient.subscribe.and.callFake(() => subscription);
-
             ngstomp.promiseResult = $q.when({});
             ngstomp.subscribe('/url', function(){});
             $rootScope.$apply();
-
             expect(ngstomp.connections.length).toBe(1);
-
 
             ngstomp.unsubscribe('/url');
             $rootScope.$apply();
+
             expect(ngstomp.connections.length).toBe(0);
             expect(subscription.unsubscribe).toHaveBeenCalled();
         });

@@ -1,4 +1,4 @@
-/*! AngularStompDK v0.2.5 */
+/*! AngularStompDK v0.3.0 */
 (function () {
     'use strict';
     var _createClass = function () {
