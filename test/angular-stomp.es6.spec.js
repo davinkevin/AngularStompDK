@@ -7,10 +7,6 @@ describe('angular-stomp-dk', () => {
             client : (value) => stompClient
         };
 
-    function resolve(promise) {
-
-    }
-
     const   url = '/ws',
             login = 'login',
             password = 'password',

@@ -1,4 +1,4 @@
-/*! AngularStompDK v0.3.0 */
+/*! AngularStompDK v0.3.1 */
 (function () {
     'use strict';
     var _createClass = function () {
@@ -91,18 +91,15 @@
             this.settings = settings;
             this.$q = $q;
             this.$rootScope = $rootScope;
-            this.stompClient = settings['class'] ? Stomp.over(new settings['class'](settings.url)) : Stomp.client(settings.url);
-            this.stompClient.debug = settings.debug ? $log.debug : function () {
-            };
-            this.connections = [];
-            this.deferred = this.$q.defer();
-            this.promiseResult = this.deferred.promise;
+            this.$log = $log;
+            this.Stomp = Stomp;
             this.connect();
         }
         _createClass(ngStompWebSocket, {
             connect: {
                 value: function connect() {
                     var _this = this;
+                    this.$setConnection();
                     this.stompClient.connect(this.settings.login, this.settings.password, function () {
                         _this.deferred.resolve();
                         _this.$digestStompAction();
@@ -185,6 +182,15 @@
             $digestStompAction: {
                 value: function $digestStompAction() {
                     !this.$rootScope.$$phase && this.$rootScope.$apply();
+                }
+            },
+            $setConnection: {
+                value: function $setConnection() {
+                    this.stompClient = this.settings['class'] ? this.Stomp.over(new this.settings['class'](this.settings.url)) : this.Stomp.client(this.settings.url);
+                    this.stompClient.debug = this.settings.debug ? this.$log.debug : angular.noop;
+                    this.connections = [];
+                    this.deferred = this.$q.defer();
+                    this.promiseResult = this.deferred.promise;
                 }
             },
             unRegisterScopeOnDestroy: {
