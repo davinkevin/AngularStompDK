@@ -120,6 +120,11 @@
                     return this;
                 }
             },
+            subscribeTo: {
+                value: function subscribeTo(topic) {
+                    return new SubscribeBuilder(this, topic);
+                }
+            },
             unsubscribe: {
                 value: function unsubscribe(url) {
                     var _this = this;
@@ -204,6 +209,48 @@
             }
         });
         return ngStompWebSocket;
+    }();
+    var SubscribeBuilder = function () {
+        /*@ngNoInject*/
+        function SubscribeBuilder(ngStomp, topic) {
+            _classCallCheck(this, SubscribeBuilder);
+            this.ngStomp = ngStomp;
+            this.topic = topic;
+            this.aCallback = angular.noop;
+            this.headers = {};
+            this.scope = {};
+        }
+        _createClass(SubscribeBuilder, {
+            callback: {
+                value: function callback(aCallback) {
+                    this.aCallback = aCallback;
+                    return this;
+                }
+            },
+            withHeaders: {
+                value: function withHeaders(headers) {
+                    this.headers = headers;
+                    return this;
+                }
+            },
+            bindTo: {
+                value: function bindTo(aScope) {
+                    this.scope = aScope;
+                    return this;
+                }
+            },
+            build: {
+                value: function build() {
+                    return this.ngStomp.subscribe(this.topic, this.aCallback, this.headers, this.scope);
+                }
+            },
+            and: {
+                value: function and() {
+                    return this.build();
+                }
+            }
+        });
+        return SubscribeBuilder;
     }();
     angular.module('AngularStompDK', []).provider('ngstomp', ngstompProvider).constant('Stomp', window.Stomp);
 }());

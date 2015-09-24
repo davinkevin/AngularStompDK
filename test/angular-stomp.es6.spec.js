@@ -159,6 +159,51 @@ describe('angular-stomp-dk', () => {
             fakeScope.$on.calls.mostRecent().args[1]();
         });
 
+        it('should subcribe by fluent API', () => {
+            let fakeScope = jasmine.createSpyObj('fakeScope', ['$on']),
+                callback = jasmine.createSpy('callback');
+
+            ngstomp.promiseResult = $q.when({});
+            ngstomp
+                .subscribeTo('/url')
+                .callback(callback)
+                .withHeaders({})
+                .bindTo(fakeScope)
+            .build();
+            $rootScope.$apply();
+
+            expect(stompClient.subscribe).toHaveBeenCalled();
+            expect(stompClient.subscribe.calls.mostRecent().args[0]).toBe('/url');
+            stompClient.subscribe.calls.mostRecent().args[1]();
+            expect(callback).toHaveBeenCalled();
+            expect(ngstomp.connections.length).toBe(1);
+            expect(fakeScope.$on).toHaveBeenCalled();
+            expect(fakeScope.$on.calls.mostRecent().args[1]).toBeDefined();
+            fakeScope.$on.calls.mostRecent().args[1]();
+        });
+
+        it('should subcribe to multiple topic by fluent API', () => {
+            let fakeScope = jasmine.createSpyObj('fakeScope', ['$on']),
+                callback = jasmine.createSpy('callback');
+
+            ngstomp.promiseResult = $q.when({});
+            ngstomp
+                .subscribeTo('/url')
+                .callback(callback)
+                .withHeaders({})
+                .bindTo(fakeScope)
+            .and()
+                .subscribeTo('/others')
+                .callback(callback)
+                .withHeaders({})
+                .bindTo(fakeScope)
+            .build();
+
+            $rootScope.$apply();
+
+            expect(ngstomp.connections.length).toBe(2);
+        });
+
         it('should subscribe to a topic without scope', () => {
             ngstomp.promiseResult = $q.when({});
             ngstomp.subscribe('/url', function(){});
