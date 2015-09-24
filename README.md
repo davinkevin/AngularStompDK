@@ -139,3 +139,44 @@ And now (since v0.1.0) you can send back information to the Web-Socket :
     }
  });
 ```
+
+A more fluent API is available to subscribe with ngstomp (Since 0.3.2) : 
+
+```js
+ angular.controller('myController', function($scope, ngstomp) {
+
+    var items = [];
+
+    ngstomp
+        .subscribeTo('/topic/item')
+                .callback(whatToDoWhenMessageComming)
+                .bindTo($scope)
+        .build()
+
+    function whatToDoWhenMessageComming(message) {
+        items.push(JSON.parse(message.body));
+    }
+ });
+```
+
+And if you want subbscribe to multiple topic, you can chain the builder pattern :
+```js
+ angular.controller('myController', function($scope, ngstomp) {
+    var vm = this;
+    vm.items = [];
+
+    ngstomp
+        .subscribeTo('/topic/item1')
+                .callback(whatToDoWhenMessageComming)
+                .bindTo($scope)
+            .and()
+        .subscribeTo('/topic/item2')
+                .callback(whatToDoWhenMessageComming)
+                .withHeaders({})
+        .build();
+
+    function whatToDoWhenMessageComming(message) {
+        vm.items.push(JSON.parse(message.body));
+    }
+ });
+```
