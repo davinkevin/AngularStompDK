@@ -1,4 +1,4 @@
-AngularStomp
+AngularStompDK
 ============
 
 [![Join the chat at https://gitter.im/davinkevin/AngularStompDK](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/davinkevin/AngularStompDK?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
@@ -18,7 +18,7 @@ Add the dependency to your Angular application :
     ])
 ```
 
-Configure the ngStomp to connect to your web-socket system :
+Configure the ngStomp module to connect to your web-socket system :
 
 ```js
     angular.module('myApp')
@@ -26,9 +26,21 @@ Configure the ngStomp to connect to your web-socket system :
             ngstompProvider
                 .url('/ws')
                 .credential('login', 'password')
-                .class(SockJS);
         });
 ```
+
+If you want to use a sub-system to do the connection, like SockJS, you can add the class name in the configuration part : 
+
+```js
+    angular.module('myApp')
+        .config(function(ngstompProvider){
+            ngstompProvider
+                .url('/ws')
+                .credential('login', 'password')
+                .class(SockJS); // <-- Will be used by StompJS to do the connection
+        });
+```
+
 
 Use it inside your controller (or everywhere you want !)
 
