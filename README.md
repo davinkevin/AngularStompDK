@@ -103,7 +103,7 @@ Don't forget to unsubscribe your callback when the $scope is detroy (or the call
     }
     
     function whatToDoWhenUnsubscribe() {
-        console.log("Unsubscribed !! :D);
+        console.log('Unsubscribed !! :D');
     }
  });
 ```
