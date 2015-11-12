@@ -1,4 +1,4 @@
-/*! AngularStompDK v0.3.1 */
+/*! AngularStompDK v0.3.3 */
 (function () {
     'use strict';
     var _createClass = function () {
@@ -24,6 +24,8 @@
             throw new TypeError('Cannot call a class as a function');
         }
     };
+    /*import angular from 'angular';
+import Stomp from 'stomp-client';*/
     var ngstompProvider = function () {
         function ngstompProvider() {
             _classCallCheck(this, ngstompProvider);
@@ -72,6 +74,17 @@
             vhost: {
                 value: function vhost(host) {
                     this.settings.vhost = host;
+                    return this;
+                }
+            },
+            heartbeat: {
+                value: function heartbeat() {
+                    var outgoing = arguments[0] === undefined ? 10000 : arguments[0];
+                    var incoming = arguments[1] === undefined ? 10000 : arguments[1];
+                    this.settings.heartbeat = {
+                        outgoing: outgoing,
+                        incoming: incoming
+                    };
                     return this;
                 }
             },
@@ -193,6 +206,10 @@
                 value: function $setConnection() {
                     this.stompClient = this.settings['class'] ? this.Stomp.over(new this.settings['class'](this.settings.url)) : this.Stomp.client(this.settings.url);
                     this.stompClient.debug = this.settings.debug ? this.$log.debug : angular.noop;
+                    if (angular.isDefined(this.settings.heartbeat)) {
+                        this.stompClient.heartbeat.outgoing = this.settings.heartbeat.outgoing;
+                        this.stompClient.heartbeat.incoming = this.settings.heartbeat.incoming;
+                    }
                     this.connections = [];
                     this.deferred = this.$q.defer();
                     this.promiseResult = this.deferred.promise;

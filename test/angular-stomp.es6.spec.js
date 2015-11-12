@@ -7,6 +7,8 @@ describe('angular-stomp-dk', () => {
             client : (value) => stompClient
         };
 
+    stompClient.heartbeat = {};
+
     const   url = '/ws',
             login = 'login',
             password = 'password',
@@ -34,6 +36,7 @@ describe('angular-stomp-dk', () => {
                     .credential(login, password)
                     .class(clazz)
                     .debug(debug)
+                    .heartbeat(12345, 67890)
                     .vhost(vhost);
             }));
 
@@ -44,6 +47,9 @@ describe('angular-stomp-dk', () => {
                 expect(ngstompProvider.settings.class).toBe(clazz);
                 expect(ngstompProvider.settings.debug).toBeTruthy();
                 expect(ngstompProvider.settings.vhost).toBe(vhost);
+                expect(ngstompProvider.settings.heartbeat.outgoing).toBe(12345);
+                expect(ngstompProvider.settings.heartbeat.incoming).toBe(67890);
+
             });
         });
         describe('give whole settings to provider', () => {
@@ -74,34 +80,6 @@ describe('angular-stomp-dk', () => {
 
         let ngstomp, $log, $rootScope, $q;
 
-        describe('specific configuration', () => {
-
-            beforeEach(inject((_$q_, _$log_, _$rootScope_) => {
-                $log = _$log_;
-                $rootScope = _$rootScope_;
-                $q = _$q_;
-
-                ngstompProvider
-                    .url(url)
-                    .credential(login, password)
-                    .debug(false)
-                    .class(null)
-                    .vhost(vhost);
-
-                ngstomp = ngstompProvider
-                    .$get($q, $log, $rootScope, Stomp)
-            }));
-
-            it('should instatiate and connect', () => {
-                expect(Stomp.client).toHaveBeenCalled();
-                expect(stompClient.debug).toBe(stompClient.debug);
-                stompClient.debug();
-                expect(stompClient.connect).toHaveBeenCalled();
-            });
-
-
-        });
-
         beforeEach(inject((_$q_, _$log_, _$rootScope_) => {
             $log = _$log_;
             $rootScope = _$rootScope_;
@@ -114,9 +92,38 @@ describe('angular-stomp-dk', () => {
                 .debug(true)
                 .vhost(vhost);
 
-            ngstomp = ngstompProvider
-                    .$get($q, $log, $rootScope, Stomp)
+            ngstomp = ngstompProvider.$get($q, $log, $rootScope, Stomp)
         }));
+
+        describe('specific configuration', () => {
+
+            beforeEach(inject((_$q_, _$log_, _$rootScope_) => {
+                $log = _$log_;
+                $rootScope = _$rootScope_;
+                $q = _$q_;
+
+                ngstompProvider
+                    .url(url)
+                    .credential(login, password)
+                    .debug(false)
+                    .class(null)
+                    .heartbeat(12, 34)
+                    .vhost(vhost);
+
+                ngstomp = ngstompProvider
+                    .$get($q, $log, $rootScope, Stomp)
+            }));
+
+            it('should instatiate and connect', () => {
+                expect(Stomp.client).toHaveBeenCalled();
+                expect(stompClient.debug).toBe(stompClient.debug);
+                stompClient.debug();
+                expect(stompClient.connect).toHaveBeenCalled();
+                expect(stompClient.heartbeat).toBeDefined();
+            });
+
+
+        });
 
         describe("connect", () => {
 
@@ -124,6 +131,8 @@ describe('angular-stomp-dk', () => {
                 expect(Stomp.over).toHaveBeenCalled();
                 expect(stompClient.debug).toBe($log.debug);
                 expect(stompClient.connect).toHaveBeenCalled();
+                expect(stompClient.heartbeat.outgoing).toBe(12);
+                expect(stompClient.heartbeat.incoming).toBe(34);
             });
 
             describe("with success", () => {
@@ -141,135 +150,137 @@ describe('angular-stomp-dk', () => {
             })
         });
 
-        it('should subscribe to a topic', () => {
-            let fakeScope = jasmine.createSpyObj('fakeScope', ['$on']),
-                callback = jasmine.createSpy('callback');
+        describe('usage', () => {
+            it('should subscribe to a topic', () => {
+                let fakeScope = jasmine.createSpyObj('fakeScope', ['$on']),
+                    callback = jasmine.createSpy('callback');
 
-            ngstomp.promiseResult = $q.when({});
-            ngstomp.subscribe('/url', callback, {}, fakeScope);
-            $rootScope.$apply();
+                ngstomp.promiseResult = $q.when({});
+                ngstomp.subscribe('/url', callback, {}, fakeScope);
+                $rootScope.$apply();
 
-            expect(stompClient.subscribe).toHaveBeenCalled();
-            expect(stompClient.subscribe.calls.mostRecent().args[0]).toBe('/url');
-            stompClient.subscribe.calls.mostRecent().args[1]();
-            expect(callback).toHaveBeenCalled();
-            expect(ngstomp.connections.length).toBe(1);
-            expect(fakeScope.$on).toHaveBeenCalled();
-            expect(fakeScope.$on.calls.mostRecent().args[1]).toBeDefined();
-            fakeScope.$on.calls.mostRecent().args[1]();
-        });
+                expect(stompClient.subscribe).toHaveBeenCalled();
+                expect(stompClient.subscribe.calls.mostRecent().args[0]).toBe('/url');
+                stompClient.subscribe.calls.mostRecent().args[1]();
+                expect(callback).toHaveBeenCalled();
+                expect(ngstomp.connections.length).toBe(1);
+                expect(fakeScope.$on).toHaveBeenCalled();
+                expect(fakeScope.$on.calls.mostRecent().args[1]).toBeDefined();
+                fakeScope.$on.calls.mostRecent().args[1]();
+            });
 
-        it('should subcribe by fluent API', () => {
-            let fakeScope = jasmine.createSpyObj('fakeScope', ['$on']),
-                callback = jasmine.createSpy('callback');
+            it('should subcribe by fluent API', () => {
+                let fakeScope = jasmine.createSpyObj('fakeScope', ['$on']),
+                    callback = jasmine.createSpy('callback');
 
-            ngstomp.promiseResult = $q.when({});
-            ngstomp
-                .subscribeTo('/url')
-                .callback(callback)
-                .withHeaders({})
-                .bindTo(fakeScope)
-            .build();
-            $rootScope.$apply();
+                ngstomp.promiseResult = $q.when({});
+                ngstomp
+                    .subscribeTo('/url')
+                    .callback(callback)
+                    .withHeaders({})
+                    .bindTo(fakeScope)
+                    .build();
+                $rootScope.$apply();
 
-            expect(stompClient.subscribe).toHaveBeenCalled();
-            expect(stompClient.subscribe.calls.mostRecent().args[0]).toBe('/url');
-            stompClient.subscribe.calls.mostRecent().args[1]();
-            expect(callback).toHaveBeenCalled();
-            expect(ngstomp.connections.length).toBe(1);
-            expect(fakeScope.$on).toHaveBeenCalled();
-            expect(fakeScope.$on.calls.mostRecent().args[1]).toBeDefined();
-            fakeScope.$on.calls.mostRecent().args[1]();
-        });
+                expect(stompClient.subscribe).toHaveBeenCalled();
+                expect(stompClient.subscribe.calls.mostRecent().args[0]).toBe('/url');
+                stompClient.subscribe.calls.mostRecent().args[1]();
+                expect(callback).toHaveBeenCalled();
+                expect(ngstomp.connections.length).toBe(1);
+                expect(fakeScope.$on).toHaveBeenCalled();
+                expect(fakeScope.$on.calls.mostRecent().args[1]).toBeDefined();
+                fakeScope.$on.calls.mostRecent().args[1]();
+            });
 
-        it('should subcribe to multiple topic by fluent API', () => {
-            let fakeScope = jasmine.createSpyObj('fakeScope', ['$on']),
-                callback = jasmine.createSpy('callback');
+            it('should subcribe to multiple topic by fluent API', () => {
+                let fakeScope = jasmine.createSpyObj('fakeScope', ['$on']),
+                    callback = jasmine.createSpy('callback');
 
-            ngstomp.promiseResult = $q.when({});
-            ngstomp
-                .subscribeTo('/url')
-                .callback(callback)
-                .withHeaders({})
-                .bindTo(fakeScope)
-            .and()
-                .subscribeTo('/others')
-                .callback(callback)
-                .withHeaders({})
-                .bindTo(fakeScope)
-            .build();
+                ngstomp.promiseResult = $q.when({});
+                ngstomp
+                    .subscribeTo('/url')
+                    .callback(callback)
+                    .withHeaders({})
+                    .bindTo(fakeScope)
+                    .and()
+                    .subscribeTo('/others')
+                    .callback(callback)
+                    .withHeaders({})
+                    .bindTo(fakeScope)
+                    .build();
 
-            $rootScope.$apply();
+                $rootScope.$apply();
 
-            expect(ngstomp.connections.length).toBe(2);
-        });
+                expect(ngstomp.connections.length).toBe(2);
+            });
 
-        it('should subscribe to a topic without scope', () => {
-            ngstomp.promiseResult = $q.when({});
-            ngstomp.subscribe('/url', function(){});
-            $rootScope.$apply();
+            it('should subscribe to a topic without scope', () => {
+                ngstomp.promiseResult = $q.when({});
+                ngstomp.subscribe('/url', function(){});
+                $rootScope.$apply();
 
-            expect(stompClient.subscribe).toHaveBeenCalled();
-            expect(ngstomp.connections.length).toBe(1);
-        });
+                expect(stompClient.subscribe).toHaveBeenCalled();
+                expect(ngstomp.connections.length).toBe(1);
+            });
 
-        it('should subscribe to a topic with custom header', () => {
-            let fakeScope = jasmine.createSpyObj('fakeScope', ['$on']),
-                callback = jasmine.createSpy('callback'),
-                headers = {key: 'value'};
+            it('should subscribe to a topic with custom header', () => {
+                let fakeScope = jasmine.createSpyObj('fakeScope', ['$on']),
+                    callback = jasmine.createSpy('callback'),
+                    headers = {key: 'value'};
 
-            ngstomp.promiseResult = $q.when({});
-            ngstomp.subscribe('/url', callback, headers, fakeScope);
-            $rootScope.$apply();
+                ngstomp.promiseResult = $q.when({});
+                ngstomp.subscribe('/url', callback, headers, fakeScope);
+                $rootScope.$apply();
 
-            expect(stompClient.subscribe).toHaveBeenCalled();
-            expect(stompClient.subscribe.calls.mostRecent().args[0]).toBe('/url');
-            stompClient.subscribe.calls.mostRecent().args[1]();
-            expect(callback).toHaveBeenCalled();
-            expect(ngstomp.connections.length).toBe(1);
-            expect(fakeScope.$on).toHaveBeenCalled();
-            expect(fakeScope.$on.calls.mostRecent().args[1]).toBeDefined();
-            expect(stompClient.subscribe.calls.mostRecent().args[2]).toBe(headers);
-            fakeScope.$on.calls.mostRecent().args[1]();
-        });
+                expect(stompClient.subscribe).toHaveBeenCalled();
+                expect(stompClient.subscribe.calls.mostRecent().args[0]).toBe('/url');
+                stompClient.subscribe.calls.mostRecent().args[1]();
+                expect(callback).toHaveBeenCalled();
+                expect(ngstomp.connections.length).toBe(1);
+                expect(fakeScope.$on).toHaveBeenCalled();
+                expect(fakeScope.$on.calls.mostRecent().args[1]).toBeDefined();
+                expect(stompClient.subscribe.calls.mostRecent().args[2]).toBe(headers);
+                fakeScope.$on.calls.mostRecent().args[1]();
+            });
 
-        it('should subscribe to a topic without scope but with a custom header', () => {
-            let headers = {field: "value"};
+            it('should subscribe to a topic without scope but with a custom header', () => {
+                let headers = {field: "value"};
 
-            ngstomp.promiseResult = $q.when({});
-            ngstomp.subscribe('/url', function(){}, headers);
-            $rootScope.$apply();
+                ngstomp.promiseResult = $q.when({});
+                ngstomp.subscribe('/url', function(){}, headers);
+                $rootScope.$apply();
 
-            expect(stompClient.subscribe).toHaveBeenCalled();
-            expect(stompClient.subscribe.calls.mostRecent().args[2]).toBe(headers);
-            expect(ngstomp.connections.length).toBe(1);
-        });
+                expect(stompClient.subscribe).toHaveBeenCalled();
+                expect(stompClient.subscribe.calls.mostRecent().args[2]).toBe(headers);
+                expect(ngstomp.connections.length).toBe(1);
+            });
 
-        it('should unsubscribe', () => {
-            let subscription = jasmine.createSpyObj('subscription', ['unsubscribe']);
-            stompClient.subscribe.and.callFake(() => subscription);
-            ngstomp.promiseResult = $q.when({});
-            ngstomp.subscribe('/url', function(){});
-            $rootScope.$apply();
-            expect(ngstomp.connections.length).toBe(1);
+            it('should unsubscribe', () => {
+                let subscription = jasmine.createSpyObj('subscription', ['unsubscribe']);
+                stompClient.subscribe.and.callFake(() => subscription);
+                ngstomp.promiseResult = $q.when({});
+                ngstomp.subscribe('/url', function(){});
+                $rootScope.$apply();
+                expect(ngstomp.connections.length).toBe(1);
 
-            ngstomp.unsubscribe('/url');
-            $rootScope.$apply();
+                ngstomp.unsubscribe('/url');
+                $rootScope.$apply();
 
-            expect(ngstomp.connections.length).toBe(0);
-            expect(subscription.unsubscribe).toHaveBeenCalled();
-        });
+                expect(ngstomp.connections.length).toBe(0);
+                expect(subscription.unsubscribe).toHaveBeenCalled();
+            });
 
-        it('should unsubscribe', () => {
-            ngstomp.promiseResult = $q.when({});
-            ngstomp.subscribe('/url', function(){});
-            $rootScope.$apply();
+            it('should unsubscribe', () => {
+                ngstomp.promiseResult = $q.when({});
+                ngstomp.subscribe('/url', function(){});
+                $rootScope.$apply();
 
-            expect(ngstomp.connections.length).toBe(1);
+                expect(ngstomp.connections.length).toBe(1);
 
-            ngstomp.unsubscribe('/url2');
-            $rootScope.$apply();
-            expect(ngstomp.connections.length).toBe(1);
+                ngstomp.unsubscribe('/url2');
+                $rootScope.$apply();
+                expect(ngstomp.connections.length).toBe(1);
+            });
         });
 
         describe('disconnection', () => {
