@@ -1,4 +1,4 @@
-AngularStomp
+AngularStompDK
 ============
 
 [![Join the chat at https://gitter.im/davinkevin/AngularStompDK](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/davinkevin/AngularStompDK?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
@@ -18,7 +18,7 @@ Add the dependency to your Angular application :
     ])
 ```
 
-Configure the ngStomp to connect to your web-socket system :
+Configure the ngStomp module to connect to your web-socket system :
 
 ```js
     angular.module('myApp')
@@ -26,9 +26,21 @@ Configure the ngStomp to connect to your web-socket system :
             ngstompProvider
                 .url('/ws')
                 .credential('login', 'password')
-                .class(SockJS);
         });
 ```
+
+If you want to use a sub-system to do the connection, like SockJS, you can add the class name in the configuration part : 
+
+```js
+    angular.module('myApp')
+        .config(function(ngstompProvider){
+            ngstompProvider
+                .url('/ws')
+                .credential('login', 'password')
+                .class(SockJS); // <-- Will be used by StompJS to do the connection
+        });
+```
+
 
 Use it inside your controller (or everywhere you want !)
 
@@ -91,7 +103,7 @@ Don't forget to unsubscribe your callback when the $scope is detroy (or the call
     }
     
     function whatToDoWhenUnsubscribe() {
-        console.log("Unsubscribed !! :D);
+        console.log('Unsubscribed !! :D');
     }
  });
 ```
@@ -136,6 +148,47 @@ And now (since v0.1.0) you can send back information to the Web-Socket :
     $scope.sendDataToWS = function(message) {
         ngstomp
             .send('/topic/item/message', objectToSend, stompHeaders);
+    }
+ });
+```
+
+A more fluent API is available to subscribe with ngstomp (Since 0.3.2) : 
+
+```js
+ angular.controller('myController', function($scope, ngstomp) {
+
+    var items = [];
+
+    ngstomp
+        .subscribeTo('/topic/item')
+                .callback(whatToDoWhenMessageComming)
+                .bindTo($scope)
+        .build()
+
+    function whatToDoWhenMessageComming(message) {
+        items.push(JSON.parse(message.body));
+    }
+ });
+```
+
+And if you want subbscribe to multiple topic, you can chain the builder pattern :
+```js
+ angular.controller('myController', function($scope, ngstomp) {
+    var vm = this;
+    vm.items = [];
+
+    ngstomp
+        .subscribeTo('/topic/item1')
+                .callback(whatToDoWhenMessageComming)
+                .bindTo($scope)
+            .and()
+        .subscribeTo('/topic/item2')
+                .callback(whatToDoWhenMessageComming)
+                .withHeaders({})
+        .build();
+
+    function whatToDoWhenMessageComming(message) {
+        vm.items.push(JSON.parse(message.body));
     }
  });
 ```
