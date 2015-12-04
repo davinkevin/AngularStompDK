@@ -3,6 +3,6 @@ engines:
     enabled: true
 
 exclude_paths:
-- test/**
-- dist/**
+- test/**/*.js
+- dist/**/*.js
 - *.js
