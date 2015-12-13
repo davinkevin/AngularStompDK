@@ -1,3 +1,6 @@
+import AngularStompDK from './angular-stomp';
+import 'angular-mocks';
+
 describe('angular-stomp-dk', () => {
 
     let ngstompProvider,

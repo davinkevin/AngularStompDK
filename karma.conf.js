@@ -1,75 +1,45 @@
-module.exports = function(config) {
+module.exports = function (config) {
     config.set({
+        frameworks: ['jspm', 'jasmine', 'jasmine-matchers'],
 
-        // base path that will be used to resolve all patterns (eg. files, exclude)
-        basePath: '.',
-
-
-        // frameworks to use
-        // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
-        frameworks: ['jasmine'],
-
-
-        // list of files / patterns to load in the browser
         files: [
-            'bower_components/angular/angular.js',
-            'bower_components/angular-mocks/angular-mocks.js',
-            'bower_components/stomp-websocket/lib/stomp.js',
-            'lib/*.js',
-            'test/**/*.spec.js'
+            '../node_modules/karma-babel-preprocessor/node_modules/babel-core/browser-polyfill.js'
         ],
 
-
-        // list of files to exclude
-        exclude: [
-
-        ],
-
-
-        // preprocess matching files before serving them to the browser
-        // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
         preprocessors: {
-            'lib/*.js': ['coverage', 'babel'],
-            'test/**/*.spec.js' : ['babel']
+            'app/**/!(*.spec).js': ['babel', 'coverage']
         },
 
+        babelPreprocessor: { options: { stage: 0, sourceMap: 'inline' } },
 
-        coverageReporter : {
-            reporters:[
-                {type: 'lcov', subdir: '.'}
+        basePath: 'public',
+
+        jspm: {
+            config: 'config.js',
+            loadFiles: ['app/angular-stomp.js', '**/*.spec.js'],
+            serveFiles: ['**/*.+(js|html|css)'],
+            stripExtension: true
+        },
+
+        proxies: {
+            '/app/': '/base/app/',
+            '/jspm_packages/': '/base/jspm_packages/'
+        },
+
+        reporters: ['dots', 'coverage'],
+
+        coverageReporter: {
+            instrumenters: { isparta : require('isparta') },
+            instrumenter: { 'app/**/*.js': 'isparta' },
+            dir: '../reports/coverage/',
+            reporters: [
+                {type: 'html'}, {type: 'json'}, {type: 'lcov'}, {type: 'text-summary'}
             ]
         },
 
-        // test results reporter to use
-        // possible values: 'dots', 'progress'
-        // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-        reporters: ['progress'],
-
-
-        // web server port
-        port: 9876,
-
-
-        // enable / disable colors in the output (reporters and logs)
-        colors: true,
-
-
-        // level of logging
-        // possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
-        logLevel: config.LOG_INFO,
-
-
-        // enable / disable watching file and executing tests whenever any file changes
-        autoWatch: true,
-
-
-        // start these browsers
-        // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
+        logLevel: config.DEBUG,
         browsers: ['PhantomJS'],
-
-
-        // Continuous Integration mode
-        // if true, Karma captures browsers, runs the tests and exits
-        singleRun: false
+        singleRun : false,
+        browserNoActivityTimeout: 75000
     });
 };

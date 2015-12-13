@@ -2,34 +2,62 @@
   "name": "AngularStompDK",
   "version": "0.3.4",
   "description": "Angular Stomp DK",
+  "jspm": {
+    "directories": {
+      "baseURL": "public"
+    },
+    "dependencies": {
+      "angular": "npm:angular@1.4.7",
+      "angular-mocks": "npm:angular-mocks@^1.4.7",
+      "stompjs": "npm:stompjs@^2.3.3"
+    },
+    "devDependencies": {
+      "babel": "npm:babel-core@^5.8.24",
+      "babel-runtime": "npm:babel-runtime@^5.8.24",
+      "core-js": "npm:core-js@^1.1.4"
+    }
+  },
   "dependencies": {
-    "bower": "*",
-    "babel": "^5.4.7",
-    "gulp": "^3.9.0",
-    "gulp-rename": "^1.2.0",
-    "gulp-uglify": "*",
-    "gulp-plumber": "*",
-    "gulp-babel": "^4.0.0",
-    "gulp-wrap-js": "^0.2.1",
-    "gulp-sourcemaps": "^1.5.0",
-    "gulp-ng-annotate": "^0.5.2"
+    "bower": "*"
   },
   "devDependencies": {
-    "babel-eslint": "^5.0.0-beta4",
-    "gulp-coveralls": "^0.1.4",
+    "gulp": "^3.9.0",
+    "gulp-bump": "^1.0.0",
+    "gulp-conventional-changelog": "^0.7.0",
+    "gulp-eslint": "^1.0.0",
+    "gulp-git": "^1.6.0",
+    "gulp-gzip": "^1.2.0",
+    "gulp-ng-annotate": "^1.1.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-sourcemaps": "^1.6.0",
+    "gulp-uglify": "^1.4.2",
+    "gulp-util": "^3.0.7",
+    "isparta": "^3.1.0",
+    "istanbul": "gotwarlost/istanbul.git#source-map",
     "jasmine-core": "^2.3.4",
-    "karma": "*",
-    "karma-babel-preprocessor": "~5.1.0",
-    "karma-cli": "*",
-    "karma-coverage": "^0.4.2",
+    "jasmine-expect": "^2.0.0-beta2",
+    "jasmine-reporters": "^2.0.7",
+    "jspm": "^0.16.13",
+    "karma": "^0.13.11",
+    "karma-babel-preprocessor": "^5.2.2",
+    "karma-coverage": "douglasduteil/karma-coverage#next",
     "karma-jasmine": "^0.3.6",
-    "karma-phantomjs-launcher": "*",
-    "phantomjs": "^1.9.17"
+    "karma-jasmine-matchers": "^2.0.0-beta2",
+    "karma-jspm": "^2.0.1",
+    "karma-phantomjs-launcher": "^0.2.1",
+    "phantomjs": "^1.9.18",
+    "require-dir": "^0.3.0",
+    "run-sequence": "^1.1.4",
+    "semver": "^5.0.3"
   },
   "scripts": {
-    "postinstall": "bower install",
-    "test": "karma start ./karma.conf.js --reporters coverage --single-run",
-    "test-tdd": "karma start ./karma.conf.js"
+    "preserve-prod": "npm run build",
+    "pretest": "npm install",
+    "postinstall": "jspm install",
+    "build": "gulp build",
+    "release": "gulp release --type $(type)",
+    "test": "karma start --single-run",
+    "test-tdd": "karma start"
   },
   "repository": {
     "type": "git",

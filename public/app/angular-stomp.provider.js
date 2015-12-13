@@ -1,7 +1,4 @@
-/*import angular from 'angular';
-import Stomp from 'stomp-client';*/
-
-class ngstompProvider {
+export default class ngstompProvider {
 
     constructor() {
         this.settings = {};
@@ -200,8 +197,3 @@ class SubscribeBuilder {
         return this.build();
     }
 }
-
-angular
-    .module('AngularStompDK', [])
-        .provider('ngstomp', ngstompProvider)
-        .constant('Stomp', window.Stomp);
