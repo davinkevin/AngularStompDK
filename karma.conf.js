@@ -37,7 +37,7 @@ module.exports = function (config) {
             ]
         },
 
-        logLevel: config.DEBUG,
+        /*logLevel: config.,*/
         browsers: ['PhantomJS'],
         singleRun : false,
         browserNoActivityTimeout: 75000

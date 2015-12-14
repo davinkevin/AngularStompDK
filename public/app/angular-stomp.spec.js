@@ -166,7 +166,7 @@ describe('angular-stomp-dk', () => {
                 expect(stompClient.subscribe.calls.mostRecent().args[0]).toBe('/url');
                 stompClient.subscribe.calls.mostRecent().args[1]();
                 expect(callback).toHaveBeenCalled();
-                expect(ngstomp.connections.length).toBe(1);
+                expect(ngstomp.connections.size).toBe(1);
                 expect(fakeScope.$on).toHaveBeenCalled();
                 expect(fakeScope.$on.calls.mostRecent().args[1]).toBeDefined();
                 fakeScope.$on.calls.mostRecent().args[1]();
@@ -189,7 +189,7 @@ describe('angular-stomp-dk', () => {
                 expect(stompClient.subscribe.calls.mostRecent().args[0]).toBe('/url');
                 stompClient.subscribe.calls.mostRecent().args[1]();
                 expect(callback).toHaveBeenCalled();
-                expect(ngstomp.connections.length).toBe(1);
+                expect(ngstomp.connections.size).toBe(1);
                 expect(fakeScope.$on).toHaveBeenCalled();
                 expect(fakeScope.$on.calls.mostRecent().args[1]).toBeDefined();
                 fakeScope.$on.calls.mostRecent().args[1]();
@@ -214,7 +214,7 @@ describe('angular-stomp-dk', () => {
 
                 $rootScope.$apply();
 
-                expect(ngstomp.connections.length).toBe(2);
+                expect(ngstomp.connections.size).toBe(2);
             });
 
             it('should subscribe to a topic without scope', () => {
@@ -223,7 +223,7 @@ describe('angular-stomp-dk', () => {
                 $rootScope.$apply();
 
                 expect(stompClient.subscribe).toHaveBeenCalled();
-                expect(ngstomp.connections.length).toBe(1);
+                expect(ngstomp.connections.size).toBe(1);
             });
 
             it('should subscribe to a topic with custom header', () => {
@@ -239,7 +239,7 @@ describe('angular-stomp-dk', () => {
                 expect(stompClient.subscribe.calls.mostRecent().args[0]).toBe('/url');
                 stompClient.subscribe.calls.mostRecent().args[1]();
                 expect(callback).toHaveBeenCalled();
-                expect(ngstomp.connections.length).toBe(1);
+                expect(ngstomp.connections.size).toBe(1);
                 expect(fakeScope.$on).toHaveBeenCalled();
                 expect(fakeScope.$on.calls.mostRecent().args[1]).toBeDefined();
                 expect(stompClient.subscribe.calls.mostRecent().args[2]).toBe(headers);
@@ -255,7 +255,7 @@ describe('angular-stomp-dk', () => {
 
                 expect(stompClient.subscribe).toHaveBeenCalled();
                 expect(stompClient.subscribe.calls.mostRecent().args[2]).toBe(headers);
-                expect(ngstomp.connections.length).toBe(1);
+                expect(ngstomp.connections.size).toBe(1);
             });
 
             it('should unsubscribe', () => {
@@ -264,12 +264,12 @@ describe('angular-stomp-dk', () => {
                 ngstomp.promiseResult = $q.when({});
                 ngstomp.subscribe('/url', function(){});
                 $rootScope.$apply();
-                expect(ngstomp.connections.length).toBe(1);
+                expect(ngstomp.connections.size).toBe(1);
 
                 ngstomp.unsubscribe('/url');
                 $rootScope.$apply();
 
-                expect(ngstomp.connections.length).toBe(0);
+                expect(ngstomp.connections.size).toBe(0);
                 expect(subscription.unsubscribe).toHaveBeenCalled();
             });
 
@@ -278,11 +278,11 @@ describe('angular-stomp-dk', () => {
                 ngstomp.subscribe('/url', function(){});
                 $rootScope.$apply();
 
-                expect(ngstomp.connections.length).toBe(1);
+                expect(ngstomp.connections.size).toBe(1);
 
                 ngstomp.unsubscribe('/url2');
                 $rootScope.$apply();
-                expect(ngstomp.connections.length).toBe(1);
+                expect(ngstomp.connections.size).toBe(1);
             });
         });
 
