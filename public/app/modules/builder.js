@@ -19,7 +19,7 @@ export default class SubscribeBuilder {
     }
 
     withHeaders(headers) {
-        this.headers = headers
+        this.headers = headers;
         return this;
     }
 
