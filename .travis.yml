@@ -3,7 +3,7 @@ node_js:
 - "0.12"
 
 install:
-- npm install --quiet -g gulp karma bower
+- npm install --quiet -g gulp karma jspm
 
 before_script:
 - npm install
