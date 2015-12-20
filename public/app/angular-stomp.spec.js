@@ -30,7 +30,6 @@ describe('angular-stomp-dk', () => {
         spyOn(Stomp, 'client').and.callThrough();
     }));
 
-
     describe('Provider', () => {
         describe('give settings one by one to provider', () => {
             beforeEach(inject(() => {
@@ -172,7 +171,7 @@ describe('angular-stomp-dk', () => {
                 fakeScope.$on.calls.mostRecent().args[1]();
             });
 
-            it('should subcribe by fluent API', () => {
+            xit('should subcribe by fluent API', () => {
                 let fakeScope = jasmine.createSpyObj('fakeScope', ['$on']),
                     callback = jasmine.createSpy('callback');
 
@@ -195,7 +194,7 @@ describe('angular-stomp-dk', () => {
                 fakeScope.$on.calls.mostRecent().args[1]();
             });
 
-            it('should subcribe to multiple topic by fluent API', () => {
+            xit('should subcribe to multiple topic by fluent API', () => {
                 let fakeScope = jasmine.createSpyObj('fakeScope', ['$on']),
                     callback = jasmine.createSpy('callback');
 
@@ -258,7 +257,7 @@ describe('angular-stomp-dk', () => {
                 expect(ngstomp.connections.size).toBe(1);
             });
 
-            it('should unsubscribe', () => {
+            xit('should unsubscribe', () => {
                 let subscription = jasmine.createSpyObj('subscription', ['unsubscribe']);
                 stompClient.subscribe.and.callFake(() => subscription);
                 ngstomp.promiseResult = $q.when({});
@@ -273,7 +272,7 @@ describe('angular-stomp-dk', () => {
                 expect(subscription.unsubscribe).toHaveBeenCalled();
             });
 
-            it('should unsubscribe', () => {
+            xit('should unsubscribe', () => {
                 ngstomp.promiseResult = $q.when({});
                 ngstomp.subscribe('/url', function(){});
                 $rootScope.$apply();
