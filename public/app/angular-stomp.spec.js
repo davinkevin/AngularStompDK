@@ -1,7 +1,7 @@
 import AngularStompDK from './angular-stomp';
 import 'angular-mocks';
 
-describe('angular-stomp-dk', () => {
+xdescribe('angular-stomp-dk', () => {
 
     let ngstompProvider,
         stompClient = jasmine.createSpyObj('stompClient', ['connect', 'send', 'disconnect', 'subscribe', 'debug']),
