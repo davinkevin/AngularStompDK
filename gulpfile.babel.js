@@ -39,7 +39,7 @@ gulp.task('watch', function() {
 
 
 gulp.task('coveralls', () => {
-    gulp.src('coverage/lcov.info')
+    gulp.src('reports/coverage/**/lcov.info')
         .pipe(coveralls());
 });
 

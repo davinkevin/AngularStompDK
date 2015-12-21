@@ -51,8 +51,7 @@
     "semver": "^5.0.3"
   },
   "scripts": {
-    "preserve-prod": "npm run build",
-    "pretest": "npm install",
+    "preserve-prod": "npm run build"
     "postinstall": "jspm install",
     "build": "gulp build",
     "release": "gulp release --type $(type)",
