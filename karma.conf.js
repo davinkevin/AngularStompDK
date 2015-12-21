@@ -32,6 +32,7 @@ module.exports = function (config) {
             instrumenters: { isparta : require('isparta') },
             instrumenter: { 'app/**/*.js': 'isparta' },
             dir: '../reports/coverage/',
+            subdir: normalizationBrowserName,
             reporters: [
                 {type: 'html'}, {type: 'json'}, {type: 'lcov'}, {type: 'text-summary'}
             ]
@@ -42,4 +43,8 @@ module.exports = function (config) {
         singleRun : false,
         browserNoActivityTimeout: 75000
     });
+
+    function normalizationBrowserName(browser) {
+        return browser.toLowerCase().split(/[ /-]/)[0];
+    }
 };
