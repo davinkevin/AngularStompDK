@@ -21,19 +21,23 @@ describe('Service', () => {
 
     let Stomp = { client : x => x, over : x => x},
         $q = { defer : x => x },
-        defered = { promise : 'promise', resolve : angular.noop, reject : angular.noop},
-        stompClient = { connect : x => x, heartbeat : {}},
+        promise = { then : angular.noop },
+        defered = { promise : promise, resolve : angular.noop, reject : angular.noop},
+        stompClient = { connect : x => x, heartbeat : {}, subscribe : angular.noop },
         $log = {},
         $rootScope = { $$phase : false, $apply : angular.noop };
+
     let ngStomp;
 
     beforeEach(() => {
         spyOn($q, 'defer').and.returnValue(defered);
         spyOn(defered, 'resolve').and.callThrough();
         spyOn(defered, 'reject').and.callThrough();
+        spyOn(promise, 'then').and.callThrough();
         spyOn(Stomp, 'client').and.returnValue(stompClient);
         spyOn(Stomp, 'over').and.returnValue(stompClient);
         spyOn(stompClient, 'connect').and.callThrough();
+        spyOn(stompClient, 'subscribe').and.callThrough();
         spyOn($rootScope, '$apply').and.callThrough();
         ngStomp = new NgStomp(settings, $q, $log, $rootScope, Stomp);
     });
@@ -56,6 +60,20 @@ describe('Service', () => {
         $rootScope.$$phase = true;
         error();
         expect(defered.reject).toHaveBeenCalled();
+    });
+
+    it('should subscribe', () => {
+        /* Given */
+        let pivotValue = 0,
+            callBack = () => pivotValue = 10;
+
+        /* When */
+        ngStomp.subscribe('http://an.url.com/foo', callBack, {}, {});
+        promise.then.calls.mostRecent().args[0]();
+        stompClient.subscribe.calls.mostRecent().args[1]();
+
+        /* Then */
+        expect(pivotValue).toBe(10);
     });
 
 });

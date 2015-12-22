@@ -35,9 +35,9 @@ export default class ngStompWebSocket {
         return this.promiseResult;
     }
 
-    subscribe(url, callback, header, scope) {
+    subscribe(url, callback, header = {}, scope) {
         this.promiseResult.then(() => {
-            this.$stompSubscribe(url, callback, header || {});
+            this.$stompSubscribe(url, callback, header);
             this.unRegisterScopeOnDestroy(scope, url);
         });
         return this;
