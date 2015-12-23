@@ -52,11 +52,11 @@ export default class ngStompWebSocket {
         return this;
     }
 
-    send(queue, data, header) {
+    send(queue, data, header = {}) {
         let sendDeffered = this.$q.defer();
 
         this.promiseResult.then(() => {
-            this.stompClient.send(queue, header || {}, JSON.stringify(data));
+            this.stompClient.send(queue, header, JSON.stringify(data));
             sendDeffered.resolve();
         });
 
