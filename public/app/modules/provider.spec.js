@@ -86,4 +86,9 @@ describe('Provider', () => {
         })
     });
 
+    it('should be configured by settings', () => {
+        let settingsObject = { an : 'object'};
+        provider.setting(settingsObject);
+        expect(settingsObject).toBe(provider.settings);
+    });
 });
