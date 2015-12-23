@@ -21,6 +21,8 @@
     "bower": "*"
   },
   "devDependencies": {
+    "babel": "^5.8.24",
+    "gulp-coveralls": "^0.1.4",
     "gulp": "^3.9.0",
     "gulp-bump": "^1.0.0",
     "gulp-conventional-changelog": "^0.7.0",
