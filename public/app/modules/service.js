@@ -1,58 +1,10 @@
-/*import angular from 'angular';
-import Stomp from 'stomp-client';*/
+/**
+ * Created by kevin on 14/12/2015.
+ */
+import SubscribeBuilder from './builder';
+import angular from 'angular';
 
-class ngstompProvider {
-
-    constructor() {
-        this.settings = {};
-    }
-
-    credential(login, password) {
-        this.settings.login = login;
-        this.settings.password = password;
-        return this;
-    }
-
-    url(url) {
-        this.settings.url = url;
-        return this;
-    }
-
-    class(clazz) {
-        this.settings.class = clazz;
-        return this;
-    }
-
-    setting(settingsObject) {
-        this.settings = settingsObject;
-        return this;
-    }
-
-    debug(boolean) {
-        this.settings.debug = boolean;
-        return this;
-    }
-
-    vhost(host) {
-        this.settings.vhost = host;
-        return this;
-    }
-
-    heartbeat(outgoing = 10000, incoming = 10000) {
-        this.settings.heartbeat = {
-            outgoing : outgoing,
-            incoming : incoming
-        };
-        return this;
-    }
-
-    /* @ngInject */
-    $get($q, $log, $rootScope, Stomp) {
-        return new ngStompWebSocket(this.settings, $q, $log, $rootScope, Stomp);
-    }
-}
-
-class ngStompWebSocket {
+export default class ngStompWebSocket {
 
     /*@ngNoInject*/
     constructor(settings, $q, $log, $rootScope, Stomp) {
@@ -83,9 +35,9 @@ class ngStompWebSocket {
         return this.promiseResult;
     }
 
-    subscribe(url, callback, header, scope) {
+    subscribe(url, callback, header = {}, scope) {
         this.promiseResult.then(() => {
-            this.$stompSubscribe(url, callback, header || {});
+            this.$stompSubscribe(url, callback, header);
             this.unRegisterScopeOnDestroy(scope, url);
         });
         return this;
@@ -100,11 +52,11 @@ class ngStompWebSocket {
         return this;
     }
 
-    send(queue, data, header) {
+    send(queue, data, header = {}) {
         let sendDeffered = this.$q.defer();
 
         this.promiseResult.then(() => {
-            this.stompClient.send(queue, header || {}, JSON.stringify(data));
+            this.stompClient.send(queue, header, JSON.stringify(data));
             sendDeffered.resolve();
         });
 
@@ -127,21 +79,13 @@ class ngStompWebSocket {
             callback.apply(self.stompClient, arguments);
             self.$digestStompAction();
         }, header);
-        this.connections.push({url: queue, subscription: subscription});
+        this.connections.set(queue, subscription);
     }
 
     $stompUnSubscribe(queue) {
-        let indexToRemove = false;
-        for (var i = 0, len = this.connections.length; i < len; i++) {
-            if (this.connections[i].url === queue) {
-                indexToRemove = i;
-                this.connections[i].subscription.unsubscribe();
-                break;
-            }
-        }
-        if (indexToRemove !== false) {
-            this.connections.splice(indexToRemove, 1);
-        }
+        let subscription = this.connections.get(queue);
+        subscription.unsubscribe();
+        this.connections.delete(queue);
     }
 
     $digestStompAction() {
@@ -155,7 +99,7 @@ class ngStompWebSocket {
             this.stompClient.heartbeat.outgoing = this.settings.heartbeat.outgoing;
             this.stompClient.heartbeat.incoming = this.settings.heartbeat.incoming;
         }
-        this.connections = [];
+        this.connections = new Map();
         this.deferred = this.$q.defer();
         this.promiseResult = this.deferred.promise;
     }
@@ -165,43 +109,3 @@ class ngStompWebSocket {
             scope.$on('$destroy', () => this.unsubscribe(url) );
     }
 }
-
-class SubscribeBuilder {
-
-    /*@ngNoInject*/
-    constructor(ngStomp, topic) {
-        this.ngStomp = ngStomp;
-        this.topic = topic
-        this.aCallback = angular.noop;
-        this.headers = {};
-        this.scope = {};
-    }
-
-    callback(aCallback) {
-        this.aCallback = aCallback;
-        return this;
-    }
-
-    withHeaders(headers) {
-        this.headers = headers
-        return this;
-    }
-
-    bindTo(aScope) {
-        this.scope = aScope;
-        return this;
-    }
-
-    build() {
-        return this.ngStomp.subscribe(this.topic, this.aCallback, this.headers, this.scope);
-    }
-
-    and() {
-        return this.build();
-    }
-}
-
-angular
-    .module('AngularStompDK', [])
-        .provider('ngstomp', ngstompProvider)
-        .constant('Stomp', window.Stomp);

@@ -3,4 +3,6 @@
 /coverage
 bower_components/
 node*/
+/public/jspm_packages
+/reports
 coverage

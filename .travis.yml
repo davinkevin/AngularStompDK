@@ -1,12 +1,13 @@
 language: node_js
 node_js:
-- "0.12"
+  - "0.12"
 
 install:
-- npm install --quiet -g gulp karma bower
+- npm install --quiet -g gulp karma jspm
 
 before_script:
 - npm install
+- jspm config registries.github.auth $JSPM_GITHUB_AUTH_TOKEN
 
 script: npm test
 
