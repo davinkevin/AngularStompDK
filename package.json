@@ -22,10 +22,11 @@
   },
   "devDependencies": {
     "babel": "^5.8.24",
-    "gulp-coveralls": "^0.1.4",
+    "del": "^2.2.0",
     "gulp": "^3.9.0",
     "gulp-bump": "^1.0.0",
     "gulp-conventional-changelog": "^0.7.0",
+    "gulp-coveralls": "^0.1.4",
     "gulp-eslint": "^1.0.0",
     "gulp-git": "^1.6.0",
     "gulp-gzip": "^1.2.0",
@@ -47,13 +48,14 @@
     "karma-jasmine-matchers": "^2.0.0-beta2",
     "karma-jspm": "^2.0.1",
     "karma-phantomjs-launcher": "^0.2.1",
+    "mkdirp": "^0.5.1",
     "phantomjs": "^1.9.18",
     "require-dir": "^0.3.0",
     "run-sequence": "^1.1.4",
     "semver": "^5.0.3"
   },
   "scripts": {
-    "preserve-prod": "npm run build",
+    "pretest" : "npm run build",
     "postinstall": "jspm install",
     "build": "gulp build",
     "release": "gulp release --type $(type)",

@@ -16,7 +16,7 @@ module.exports = function (config) {
 
         jspm: {
             config: 'config.js',
-            loadFiles: ['app/angular-stomp.js', '**/*.spec.js'],
+            loadFiles: ['**/*.spec.js'],
             serveFiles: ['**/*.+(js|html|css)'],
             stripExtension: true
         },
@@ -38,7 +38,6 @@ module.exports = function (config) {
             ]
         },
 
-        /*logLevel: config.,*/
         browsers: ['PhantomJS'],
         singleRun : false,
         browserNoActivityTimeout: 75000

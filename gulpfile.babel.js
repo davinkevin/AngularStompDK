@@ -1,25 +1,5 @@
-// Include gulp and Our Plugins
-import gulp from 'gulp';
-import coveralls from 'gulp-coveralls';
+/* Full config of gulp task located in ./build/tasks/*.js */
 
-let jsLocation = 'lib/*.js',
-    jsDestination = 'dist/';
+import requiredir from 'require-dir';
 
-gulp.task('scripts', function() {
-    console.log('scripts');
-});
-
-// Watch Files For Changes
-gulp.task('watch', function() {
-    gulp.start('scripts');
-    gulp.watch(jsLocation, ['scripts']);
-});
-
-
-gulp.task('coveralls', () => {
-    gulp.src('reports/coverage/phantomjs/lcov.info')
-        .pipe(coveralls());
-});
-
-// Default Task
-gulp.task('default', ['scripts']);
+requiredir('./build/tasks', { recurse: true });
