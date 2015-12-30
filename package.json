@@ -1,15 +1,15 @@
 {
   "name": "AngularStompDK",
-  "version": "0.3.4",
+  "version": "0.4.0",
   "description": "Angular Stomp DK",
   "jspm": {
     "directories": {
       "baseURL": "public"
     },
     "dependencies": {
-      "angular": "npm:angular@1.4.7",
-      "angular-mocks": "npm:angular-mocks@^1.4.7",
-      "stompjs": "npm:stompjs@^2.3.3"
+      "angular": "github:angular/bower-angular@^1.4.7",
+      "angular-mocks": "github:angular/bower-angular-mocks@^1.4.7",
+      "stompjs": "github:jmesnil/stomp-websocket@^2.3.4"
     },
     "devDependencies": {
       "babel": "npm:babel-core@^5.8.24",
@@ -55,7 +55,7 @@
     "semver": "^5.0.3"
   },
   "scripts": {
-    "pretest" : "npm run build",
+    "pretest": "npm run build",
     "postinstall": "jspm install",
     "build": "gulp build",
     "release": "gulp release --type $(type)",

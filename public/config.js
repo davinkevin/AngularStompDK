@@ -15,12 +15,15 @@ System.config({
   },
 
   map: {
-    "angular": "npm:angular@1.4.7",
-    "angular-mocks": "npm:angular-mocks@1.4.8",
+    "angular": "github:angular/bower-angular@1.4.8",
+    "angular-mocks": "github:angular/bower-angular-mocks@1.4.8",
     "babel": "npm:babel-core@5.8.34",
     "babel-runtime": "npm:babel-runtime@5.8.34",
     "core-js": "npm:core-js@1.2.6",
     "stompjs": "github:jmesnil/stomp-websocket@2.3.4",
+    "github:angular/bower-angular-mocks@1.4.8": {
+      "angular": "github:angular/bower-angular@1.4.8"
+    },
     "github:jspm/nodelibs-assert@0.1.0": {
       "assert": "npm:assert@1.3.0"
     },
@@ -32,9 +35,6 @@ System.config({
     },
     "github:jspm/nodelibs-util@0.1.0": {
       "util": "npm:util@0.10.3"
-    },
-    "npm:angular@1.4.7": {
-      "process": "github:jspm/nodelibs-process@0.1.2"
     },
     "npm:assert@1.3.0": {
       "util": "npm:util@0.10.3"
