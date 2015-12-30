@@ -2,11 +2,11 @@
   "name": "AngularStompDK",
   "version": "0.4.0",
   "description": "Angular Stomp DK",
+  "main" : "dist/angular-stomp",
   "jspm": {
     "directories": {
       "baseURL": "public"
     },
-    "main" : "app/angular-stomp",
     "dependencies": {
       "angular": "github:angular/bower-angular@^1.4.7",
       "angular-mocks": "github:angular/bower-angular-mocks@^1.4.7",
