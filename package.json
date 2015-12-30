@@ -6,6 +6,7 @@
     "directories": {
       "baseURL": "public"
     },
+    "main" : "app/angular-stomp",
     "dependencies": {
       "angular": "github:angular/bower-angular@^1.4.7",
       "angular-mocks": "github:angular/bower-angular-mocks@^1.4.7",
@@ -16,9 +17,6 @@
       "babel-runtime": "npm:babel-runtime@^5.8.24",
       "core-js": "npm:core-js@^1.1.4"
     }
-  },
-  "dependencies": {
-    "bower": "*"
   },
   "devDependencies": {
     "babel": "^5.8.24",
