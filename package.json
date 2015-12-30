@@ -1,8 +1,8 @@
 {
   "name": "AngularStompDK",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "Angular Stomp DK",
-  "main" : "dist/angular-stomp",
+  "main": "dist/angular-stomp",
   "jspm": {
     "directories": {
       "baseURL": "public"
