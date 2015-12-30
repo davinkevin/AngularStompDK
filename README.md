@@ -8,11 +8,12 @@ Angular service to Stomp Websocket Library.
 This library is an interface between native Stomp comunication and AngularJS
 This service relies on stomp.js that can be found at: https://github.com/jmesnil/stomp-websocket/
 
-### Installation
+### 1. Installation
+----------------
 
 This library is developped in ES2015 (and with some ES20XX features) and transpilled into plain old Javascript for browser compatibility. You can choose to use this lib from a standard AngularJS Project or inside a AngularJS written in ES2015.
 
-#### ES5 : Plain Old Javascript
+#### 1. 1. ES5 : Plain Old Javascript
 
 You have to import the transpiled files (normaly located in the dist folder) in your Single Page App.
 Don't forget to import Angular and Stomp.js first (because the lib relies on it).
@@ -29,8 +30,8 @@ And add the dependency to your Angular application :
 angular.module('myApp', [ 'AngularStompDK' ])
 ```
 
-#### ES2015 and more
-
+#### 1. 2. ES2015 and more
+----------------
 You can now (since version 0.4.0) import AngularStompDK directly from JSPM (Package manager build upon SystemJS) 
 
 ```
@@ -64,11 +65,13 @@ let app = angular.module('MyWonderfullStompApp', [ ngStomp.name ] );
 ```
 
 
-#### Configuration
+#### 2. Configuration
+----------------
 
 All the code example will be written in ES5 for the moment, if some of you would like to have example in ES2015, open an issue or do a PR.
 
-##### Standard configuration
+##### 2. 1. Standard configuration
+----------------
 
 Configure the ngStomp module to connect to your web-socket system :
 
@@ -81,7 +84,8 @@ Configure the ngStomp module to connect to your web-socket system :
         });
 ```
 
-##### Configuration with underlying implementation
+##### 2. 2. Configuration with underlying implementation
+----------------
 
 If you want to use a sub-system to do the connection, like SockJS, you can add the class name in the configuration part.
 Don't forget to import this underlying library in your page via Bower (and HTML script tag or other) or via JSPM.
@@ -96,7 +100,8 @@ Don't forget to import this underlying library in your page via Bower (and HTML 
         });
 ```
 
-#### Receive information from Stomp Web-Socket
+#### 3. 1. Receive information from Stomp Web-Socket
+----------------
 
 Use it inside your controller (or everywhere you want !)
 
@@ -183,7 +188,8 @@ A simple way to unsubscribe automatically is to give the $scope as fourth parame
  });
 ```
 
-#### Builder Pattern to subscribe
+#### 3. 2. Builder Pattern to subscribe
+----------------
 
 A more fluent API is available to subscribe with ngstomp : 
 
@@ -226,7 +232,8 @@ And if you want subbscribe to multiple topic, you can chain the builder pattern 
  });
 ```
 
-#### Send information
+#### 3. 3. Send information
+----------------
 
 You can send back information to the Web-Socket : 
 
