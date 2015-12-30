@@ -4,19 +4,58 @@ AngularStompDK
 [![Join the chat at https://gitter.im/davinkevin/AngularStompDK](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/davinkevin/AngularStompDK?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Build Status](https://travis-ci.org/davinkevin/AngularStompDK.svg?branch=master)](https://travis-ci.org/davinkevin/AngularStompDK) [![Coverage Status](https://coveralls.io/repos/davinkevin/AngularStompDK/badge.svg?branch=master)](https://coveralls.io/r/davinkevin/AngularStompDK?branch=master) [![Code Climate](https://codeclimate.com/github/davinkevin/AngularStompDK/badges/gpa.svg)](https://codeclimate.com/github/davinkevin/AngularStompDK) 
 
-Angular service to Web-Stomp
+Angular service to Stomp Websocket Library. 
+This library is an interface between native Stomp comunication and AngularJS
+This service relies on stomp.js that can be found at: https://github.com/jmesnil/stomp-websocket/
 
-Usage
------
-This class relies on stomp.js that can be found at: https://github.com/jmesnil/stomp-websocket/
+### Installation
 
-Add the dependency to your Angular application :
+This library is developped in ES2015 (and with some ES20XX features) and transpilled into plain old Javascript for browser compatibility. You can choose to use this lib from a standard AngularJS Project or inside a AngularJS written in ES2015.
+
+#### ES5 : Plain Old Javascript
+
+You have to import the transpiled files (normaly located in the dist folder) in your Single Page App.
+Don't forget to import Angular and Stomp.js first (because the lib relies on it).
+
+```html
+<script src="js/lib/stompjs/stomp.js" />
+<script src="js/lib/AngularStompDK/angular/angular.min.js" />
+<script src="js/lib/AngularStompDK/dist/angular-stomp.min.js" />
+```
+
+And add the dependency to your Angular application :
 
 ```js
-    angular.module('myApp', [
-        'AngularStompDK'
-    ])
+angular.module('myApp', [ 'AngularStompDK' ])
 ```
+
+#### ES2015 and more
+
+You can now (since version 0.4.0) import AngularStompDK directly from JSPM (Package manager build upon SystemJS) 
+
+```
+$ jspm install github:AngularStompDK
+```
+
+All the dependencies will automatically be fetch (kind of magic, isn't it :D) and you just have to register the lib at the AngularJS level (described here with the bootstrap method, commonly used in JSPM | ES2015 environnement).
+
+```js 
+import angular from 'angular';
+import AngularStompDK from 'AngularStompDK';
+...
+
+let app = angular.module('MyWonderfullStompApp', [ AngularStompDK.name ] );
+
+angular
+    .element(document)
+    .ready(() => angular.bootstrap(element, [ app ] ));
+```
+
+#### Configuration
+
+All the code example will be written in ES5 for the moment, if some of you would like to have example in ES2015, open an issue or do a PR.
+
+##### Standard configuration
 
 Configure the ngStomp module to connect to your web-socket system :
 
@@ -29,7 +68,10 @@ Configure the ngStomp module to connect to your web-socket system :
         });
 ```
 
-If you want to use a sub-system to do the connection, like SockJS, you can add the class name in the configuration part : 
+##### Configuration with underlying implementation
+
+If you want to use a sub-system to do the connection, like SockJS, you can add the class name in the configuration part.
+Don't forget to import this underlying library in your page via Bower (and HTML script tag or other) or via JSPM.
 
 ```js
     angular.module('myApp')
@@ -41,14 +83,14 @@ If you want to use a sub-system to do the connection, like SockJS, you can add t
         });
 ```
 
+#### Receive information from Stomp Web-Socket
 
 Use it inside your controller (or everywhere you want !)
 
 ```js
-    angular.controller('myController', function($scope, ngstomp) {
+    angular.controller('myController', function(ngstomp) {
     
-        var webSocketEndPoint = '/topic/item',
-            items = [];
+        var webSocketEndPoint = '/topic/item', items = [];
 
         ngstomp
             .subscribe(webSocketEndPoint, whatToDoWhenMessageComming);
@@ -62,7 +104,7 @@ Use it inside your controller (or everywhere you want !)
 You can chain multiple subscribe and add headers to your subscription :
 
 ```js
- angular.controller('myController', function($scope, ngstomp) {
+ angular.controller('myController', function(ngstomp) {
     
     var items = [], 
         headers = {
@@ -79,7 +121,7 @@ You can chain multiple subscribe and add headers to your subscription :
  });
 ```
 
-Don't forget to unsubscribe your callback when the $scope is detroy (or the call will append even after the scope has been detroyed)
+Don't forget to unsubscribe your callback when the $scope is detroyed (or the call will keep happening even after the scope has been detroyed)
 
 ```js
  angular.controller('myController', function($scope, ngstomp) {
@@ -108,7 +150,7 @@ Don't forget to unsubscribe your callback when the $scope is detroy (or the call
  });
 ```
 
-Or you can give the $scope to the subscribe method to enable the auto-unsubscribe
+A simple way to unsubscribe automatically is to give the $scope as fourth parameters to let the library register the disconnection when the $scope will be destroyed. A better syntax could be used with the builder pattern (see above).
 
 ```js
  angular.controller('myController', function($scope, ngstomp) {
@@ -128,31 +170,9 @@ Or you can give the $scope to the subscribe method to enable the auto-unsubscrib
  });
 ```
 
-And now (since v0.1.0) you can send back information to the Web-Socket : 
+#### Builder Pattern to subscribe
 
-```js
- angular.controller('myController', function($scope, ngstomp) {
-
-    var items = [];
-
-    ngstomp
-        .subscribe('/topic/item', whatToDoWhenMessageComming, $scope);
-
-    function whatToDoWhenMessageComming(message) {
-        items.push(JSON.parse(message.body));
-    }
-
-    var objectToSend = { message : 'Hello Web-Socket'},
-        stompHeaders = {headers1 : 'xx', headers2 : 'yy'};
-         
-    $scope.sendDataToWS = function(message) {
-        ngstomp
-            .send('/topic/item/message', objectToSend, stompHeaders);
-    }
- });
-```
-
-A more fluent API is available to subscribe with ngstomp (Since 0.3.2) : 
+A more fluent API is available to subscribe with ngstomp : 
 
 ```js
  angular.controller('myController', function($scope, ngstomp) {
@@ -192,3 +212,45 @@ And if you want subbscribe to multiple topic, you can chain the builder pattern 
     }
  });
 ```
+
+#### Send information
+
+You can send back information to the Web-Socket : 
+
+```js
+ angular.controller('myController', function($scope, ngstomp) {
+
+    var items = [];
+
+    ngstomp
+        .subscribe('/topic/item', whatToDoWhenMessageComming, $scope);
+
+    function whatToDoWhenMessageComming(message) {
+        items.push(JSON.parse(message.body));
+    }
+
+    var objectToSend = { message : 'Hello Web-Socket'},
+        stompHeaders = {headers1 : 'xx', headers2 : 'yy'};
+         
+    this.sendDataToWS = function(message) {
+        ngstomp
+            .send('/topic/item/message', objectToSend, stompHeaders);
+    }
+ });
+```
+
+## Frequently Asked Question : 
+
+##### Why using $scope ? This seems to be deprecated in angularJs version since 1.3 ?
+The $scope is the only bridge between Angular Lifecycle and standard HTML behaviour (like web-socket). To keep both in sync, we have to use the $scope.
+
+##### How can I contribute to this project ? Because I think a very important feature is missing...
+This project is totally open-source, and I'll be glad to see Push Request, so Fork it, improve it, test it (don't forget !) and do PR. It's very simple to work that way.
+
+##### I have some question and I don't understand how it works, what can I do ?
+First of all, I encourage you to read the implementation of the lib, and even the tests. Right now, it's only 200 lines of code (without the test), so it's very simple (read the ES2015 version, not the transpilled version...).
+If it doesn't help, feel free to open a issue on the github, and if I can help, I will try to. 
+
+#### I have another question and it's not in this FAQ
+Like the previous question, open an issue and I will add it to this README (or you can do a PR only on this file).
+
