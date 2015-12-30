@@ -41,15 +41,28 @@ All the dependencies will automatically be fetch (kind of magic, isn't it :D) an
 
 ```js 
 import angular from 'angular';
-import AngularStompDK from 'AngularStompDK';
+import 'AngularStompDK'; // <-- Loading the full transpiled file
 ...
 
-let app = angular.module('MyWonderfullStompApp', [ AngularStompDK.name ] );
+let app = angular.module('MyWonderfullStompApp', [ 'AngularStompDK' ] );
 
 angular
     .element(document)
     .ready(() => angular.bootstrap(element, [ app ] ));
 ```
+
+You also can load the ES2015 file and use your current transpiler to use AngularStompDK. For this, we have to use the relative path of the entrypoint in the project 
+
+```js 
+import angular from 'angular';
+import ngStomp from 'AngularStompDK/public/app/angular-stomp'; // Path to the main file, subject to modification soon
+...
+
+let app = angular.module('MyWonderfullStompApp', [ ngStomp.name ] );
+
+... 
+```
+
 
 #### Configuration
 
