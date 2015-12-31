@@ -42,7 +42,7 @@ All the dependencies will automatically be fetch (kind of magic, isn't it :D) an
 
 ```js 
 import angular from 'angular';
-import 'AngularStompDK'; // <-- Loading the full transpiled file
+import 'AngularStompDK'; // <-- Loading the full transpiled file from dist
 ...
 
 let app = angular.module('MyWonderfullStompApp', [ 'AngularStompDK' ] );
@@ -56,7 +56,7 @@ You also can load the ES2015 file and use your current transpiler to use Angular
 
 ```js 
 import angular from 'angular';
-import ngStomp from 'AngularStompDK/public/app/angular-stomp'; // Path to the main file, subject to modification soon
+import ngStomp from 'AngularStompDK/core/ngStomp'; // Path to the main ES6 Module
 ...
 
 let app = angular.module('MyWonderfullStompApp', [ ngStomp.name ] );
