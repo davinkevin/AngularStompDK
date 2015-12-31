@@ -3,7 +3,7 @@ import path from 'path';
 
 /* All constant and location of the application */
 const appName = 'angular-stomp';
-const srcDirName = 'public';
+const srcDirName = 'src';
 const releaseDirName = 'dist';
 const root = path.dirname(__dirname);
 
@@ -19,7 +19,7 @@ export default {
   },
   releaseDirName: releaseDirName,
   app: {
-    entryPoint : `app/angular-stomp.js`,
+    entryPoint : `${srcDirName}/ngStomp.js`,
     name: appName
   },
   glob: {

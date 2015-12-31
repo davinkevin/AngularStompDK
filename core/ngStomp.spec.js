@@ -1,4 +1,4 @@
-import AngularStompDK from './angular-stomp';
+import AngularStompDK from './ngStomp';
 import 'angular-mocks';
 
 describe('angular-stomp', () => {

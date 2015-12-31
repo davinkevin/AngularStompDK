@@ -3,26 +3,26 @@ module.exports = function (config) {
         frameworks: ['jspm', 'jasmine', 'jasmine-matchers'],
 
         files: [
-            '../node_modules/karma-babel-preprocessor/node_modules/babel-core/browser-polyfill.js'
+            'node_modules/karma-babel-preprocessor/node_modules/babel-core/browser-polyfill.js'
         ],
 
         preprocessors: {
-            'app/**/!(*.spec).js': ['babel', 'coverage']
+            'core/**/!(*.spec).js': ['babel', 'coverage']
         },
 
         babelPreprocessor: { options: { stage: 0, sourceMap: 'inline' } },
 
-        basePath: 'public',
+        /*basePath: 'core',*/
 
         jspm: {
             config: 'config.js',
-            loadFiles: ['**/*.spec.js'],
-            serveFiles: ['**/*.+(js|html|css)'],
+            loadFiles: ['core/**/*.spec.js'],
+            serveFiles: ['core/**/*.+(js|html|css)'],
             stripExtension: true
         },
 
         proxies: {
-            '/app/': '/base/app/',
+            '/core/' : '/base/core/',
             '/jspm_packages/': '/base/jspm_packages/'
         },
 
@@ -30,14 +30,15 @@ module.exports = function (config) {
 
         coverageReporter: {
             instrumenters: { isparta : require('isparta') },
-            instrumenter: { 'app/**/*.js': 'isparta' },
-            dir: '../reports/coverage/',
+            instrumenter: { 'core/**/*.js': 'isparta' },
+            dir: 'reports/coverage/',
             subdir: normalizationBrowserName,
             reporters: [
                 {type: 'html'}, {type: 'json'}, {type: 'lcov'}, {type: 'text-summary'}
             ]
         },
 
+        /*logLevel: config.LOG_DEBUG,*/
         browsers: ['PhantomJS'],
         singleRun : false,
         browserNoActivityTimeout: 75000
