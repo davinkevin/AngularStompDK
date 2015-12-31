@@ -1,4 +1,4 @@
-jspm_packages/
+/jspm_packages/
 .idea
 *.iml
 node*/
