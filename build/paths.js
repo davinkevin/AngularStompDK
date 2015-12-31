@@ -3,7 +3,7 @@ import path from 'path';
 
 /* All constant and location of the application */
 const appName = 'angular-stomp';
-const srcDirName = 'src';
+const srcDirName = 'core';
 const releaseDirName = 'dist';
 const root = path.dirname(__dirname);
 
