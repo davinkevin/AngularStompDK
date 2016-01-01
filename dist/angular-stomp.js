@@ -1,5 +1,5 @@
 "format global";
-"globals.stompjs stompjs";
+"globals.Stomp stompjs";
 "globals.angular angular";
 (function(global) {
 
@@ -1984,6 +1984,6 @@ $__System.register('1', ['38', '3c', '3b'], function (_export) {
 });
 })
 (function(factory) {
-  factory(angular, stompjs, angular);
+  factory(angular, Stomp, angular);
 });
 //# sourceMappingURL=angular-stomp.js.map
