@@ -59,13 +59,6 @@ describe('Service', () => {
         expect(defered.resolve).toHaveBeenCalled();
     });
 
-    it('should resolve in stomp', () => {
-        let error = stompClient.connect.calls.argsFor(0)[3];
-        $rootScope.$$phase = true;
-        error();
-        expect(defered.reject).toHaveBeenCalled();
-    });
-
     it('should subscribe', () => {
         /* Given */
         let pivotValue = 0,
@@ -128,6 +121,15 @@ describe('Service', () => {
             let aPromise = ngStomp.disconnect();
             expect(stompClient.disconnect).toHaveBeenCalled();
             expect(aPromise).toBe(promise);
+        });
+
+        it('should handle a disconnection', () => {
+            let reconnectOnError = stompClient.connect.calls.argsFor(0)[3];
+            $rootScope.$$phase = true;
+            reconnectOnError();
+            expect(stompClient.connect.calls.argsFor(1)[0]).toEqual(settings.login);
+            expect(stompClient.connect.calls.argsFor(1)[1]).toEqual(settings.password);
+            expect(stompClient.connect.calls.argsFor(1)[4]).toEqual(settings.vhost);
         });
 
     });

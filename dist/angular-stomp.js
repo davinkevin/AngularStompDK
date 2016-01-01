@@ -1655,6 +1655,7 @@ $__System.register('37', ['2', '3', '4', '36', '38'], function (_export) {
                     this.$rootScope = $rootScope;
                     this.$log = $log;
                     this.Stomp = Stomp;
+                    this.connections = new _Map();
 
                     this.connect();
                 }
@@ -1669,8 +1670,8 @@ $__System.register('37', ['2', '3', '4', '36', '38'], function (_export) {
                             _this.deferred.resolve();
                             _this.$digestStompAction();
                         }, function () {
-                            _this.deferred.reject();
-                            _this.$digestStompAction();
+                            _this.connect();
+                            _this.$reconnectAll();
                         }, this.settings.vhost);
                         return this.promiseResult;
                     }
@@ -1682,7 +1683,7 @@ $__System.register('37', ['2', '3', '4', '36', '38'], function (_export) {
                         if (header === undefined) header = {};
 
                         this.promiseResult.then(function () {
-                            _this2.$stompSubscribe(url, callback, header);
+                            _this2.$stompSubscribe(url, callback, header, scope);
                             _this2.unRegisterScopeOnDestroy(scope, url);
                         });
                         return this;
@@ -1733,18 +1734,18 @@ $__System.register('37', ['2', '3', '4', '36', '38'], function (_export) {
                     }
                 }, {
                     key: '$stompSubscribe',
-                    value: function $stompSubscribe(queue, callback, header) {
+                    value: function $stompSubscribe(queue, callback, header, scope) {
                         var self = this;
                         var subscription = self.stompClient.subscribe(queue, function () {
                             callback.apply(self.stompClient, arguments);
                             self.$digestStompAction();
                         }, header);
-                        this.connections.set(queue, subscription);
+                        this.connections.set(queue, { sub: subscription, callback: callback, header: header, scope: scope });
                     }
                 }, {
                     key: '$stompUnSubscribe',
                     value: function $stompUnSubscribe(queue) {
-                        var subscription = this.connections.get(queue);
+                        var subscription = this.connections.get(queue).sub;
                         subscription.unsubscribe();
                         this.connections['delete'](queue);
                     }
@@ -1762,7 +1763,6 @@ $__System.register('37', ['2', '3', '4', '36', '38'], function (_export) {
                             this.stompClient.heartbeat.outgoing = this.settings.heartbeat.outgoing;
                             this.stompClient.heartbeat.incoming = this.settings.heartbeat.incoming;
                         }
-                        this.connections = new _Map();
                         this.deferred = this.$q.defer();
                         this.promiseResult = this.deferred.promise;
                     }
@@ -1773,6 +1773,15 @@ $__System.register('37', ['2', '3', '4', '36', '38'], function (_export) {
 
                         if (scope !== undefined && angular.isFunction(scope.$on)) scope.$on('$destroy', function () {
                             return _this6.unsubscribe(url);
+                        });
+                    }
+                }, {
+                    key: '$reconnectAll',
+                    value: function $reconnectAll() {
+                        var _this7 = this;
+
+                        this.connections.forEach(function (val, key) {
+                            return _this7.subscribe(key, val.callback, val.header, val.scope);
                         });
                     }
                 }]);

@@ -13,6 +13,7 @@ export default class ngStompWebSocket {
         this.$rootScope = $rootScope;
         this.$log = $log;
         this.Stomp = Stomp;
+        this.connections = new Map();
 
         this.connect();
     }
@@ -27,8 +28,8 @@ export default class ngStompWebSocket {
                 this.$digestStompAction();
             },
             () => {
-                this.deferred.reject();
-                this.$digestStompAction();
+                this.connect();
+                this.$reconnectAll()
             },
             this.settings.vhost
         );
@@ -37,7 +38,7 @@ export default class ngStompWebSocket {
 
     subscribe(url, callback, header = {}, scope) {
         this.promiseResult.then(() => {
-            this.$stompSubscribe(url, callback, header);
+            this.$stompSubscribe(url, callback, header, scope);
             this.unRegisterScopeOnDestroy(scope, url);
         });
         return this;
@@ -73,17 +74,17 @@ export default class ngStompWebSocket {
         return disconnectionPromise.promise;
     }
 
-    $stompSubscribe(queue, callback, header) {
+    $stompSubscribe(queue, callback, header, scope) {
         let self = this;
         let subscription = self.stompClient.subscribe(queue, function() {
             callback.apply(self.stompClient, arguments);
             self.$digestStompAction();
         }, header);
-        this.connections.set(queue, subscription);
+        this.connections.set(queue, { sub : subscription, callback : callback, header : header, scope : scope });
     }
 
     $stompUnSubscribe(queue) {
-        let subscription = this.connections.get(queue);
+        let subscription = this.connections.get(queue).sub;
         subscription.unsubscribe();
         this.connections.delete(queue);
     }
@@ -99,7 +100,6 @@ export default class ngStompWebSocket {
             this.stompClient.heartbeat.outgoing = this.settings.heartbeat.outgoing;
             this.stompClient.heartbeat.incoming = this.settings.heartbeat.incoming;
         }
-        this.connections = new Map();
         this.deferred = this.$q.defer();
         this.promiseResult = this.deferred.promise;
     }
@@ -107,5 +107,12 @@ export default class ngStompWebSocket {
     unRegisterScopeOnDestroy(scope, url) {
         if (scope !== undefined && angular.isFunction(scope.$on))
             scope.$on('$destroy', () => this.unsubscribe(url) );
+    }
+
+    $reconnectAll() {
+        this.connections
+            .forEach(
+                (val, key) => this.subscribe(key, val.callback, val.header, val.scope)
+            );
     }
 }
