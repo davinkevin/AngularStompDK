@@ -1,3 +1,13 @@
+<a name="0.5.2"></a>
+## [0.5.2](https://github.com/davinkevin/AngularStompDK/compare/v0.5.1...v0.5.2) (2016-01-01)
+
+
+### Bug Fixes
+
+* **build:** change name of global value for es5 build ([70f0625](https://github.com/davinkevin/AngularStompDK/commit/70f0625))
+
+
+
 <a name="0.5.1"></a>
 ## [0.5.1](https://github.com/davinkevin/AngularStompDK/compare/v0.5.0...v0.5.1) (2015-12-31)
 

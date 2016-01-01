@@ -1,6 +1,6 @@
 {
   "name": "AngularStompDK",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "description": "Angular Stomp DK",
   "main": "dist/angular-stomp",
   "jspm": {
