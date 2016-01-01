@@ -1,3 +1,13 @@
+<a name="0.6.0"></a>
+# [0.6.0](https://github.com/davinkevin/AngularStompDK/compare/v0.5.2...v0.6.0) (2016-01-01)
+
+
+### Features
+
+* **re-connection:** automatically reconnect if connection lost ([06efc8e](https://github.com/davinkevin/AngularStompDK/commit/06efc8e)), closes [#13](https://github.com/davinkevin/AngularStompDK/issues/13)
+
+
+
 <a name="0.5.2"></a>
 ## [0.5.2](https://github.com/davinkevin/AngularStompDK/compare/v0.5.1...v0.5.2) (2016-01-01)
 
