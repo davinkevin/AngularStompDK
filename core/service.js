@@ -7,12 +7,13 @@ import angular from 'angular';
 export default class ngStompWebSocket {
 
     /*@ngNoInject*/
-    constructor(settings, $q, $log, $rootScope, Stomp) {
+    constructor(settings, $q, $log, $rootScope, $timeout, Stomp) {
         this.settings = settings;
         this.$q = $q;
         this.$rootScope = $rootScope;
         this.$log = $log;
         this.Stomp = Stomp;
+        this.$timeout = $timeout;
         this.connections = new Map();
 
         this.connect();
@@ -28,8 +29,10 @@ export default class ngStompWebSocket {
                 this.$digestStompAction();
             },
             () => {
-                this.connect();
-                this.$reconnectAll()
+                this.$timeout(() => {
+                    this.connect();
+                    this.$reconnectAll()
+                }, this.settings.timeOut);
             },
             this.settings.vhost
         );

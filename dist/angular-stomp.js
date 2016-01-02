@@ -1647,7 +1647,7 @@ $__System.register('37', ['2', '3', '4', '36', '38'], function (_export) {
 
                 /*@ngNoInject*/
 
-                function ngStompWebSocket(settings, $q, $log, $rootScope, Stomp) {
+                function ngStompWebSocket(settings, $q, $log, $rootScope, $timeout, Stomp) {
                     _classCallCheck(this, ngStompWebSocket);
 
                     this.settings = settings;
@@ -1655,6 +1655,7 @@ $__System.register('37', ['2', '3', '4', '36', '38'], function (_export) {
                     this.$rootScope = $rootScope;
                     this.$log = $log;
                     this.Stomp = Stomp;
+                    this.$timeout = $timeout;
                     this.connections = new _Map();
 
                     this.connect();
@@ -1670,8 +1671,10 @@ $__System.register('37', ['2', '3', '4', '36', '38'], function (_export) {
                             _this.deferred.resolve();
                             _this.$digestStompAction();
                         }, function () {
-                            _this.connect();
-                            _this.$reconnectAll();
+                            _this.$timeout(function () {
+                                _this.connect();
+                                _this.$reconnectAll();
+                            }, _this.settings.timeOut);
                         }, this.settings.vhost);
                         return this.promiseResult;
                     }
@@ -1906,7 +1909,13 @@ $__System.register('3b', ['3', '4', '37'], function (_export) {
                 function ngstompProvider() {
                     _classCallCheck(this, ngstompProvider);
 
-                    this.settings = {};
+                    this.settings = {
+                        timeOut: 5000,
+                        heartbeat: {
+                            outgoing: 10000,
+                            incoming: 10000
+                        }
+                    };
                 }
 
                 _createClass(ngstompProvider, [{
@@ -1947,23 +1956,24 @@ $__System.register('3b', ['3', '4', '37'], function (_export) {
                         return this;
                     }
                 }, {
+                    key: 'reconnectAfter',
+                    value: function reconnectAfter(numberInSeconds) {
+                        this.settings.timeOut = numberInSeconds * 1000;
+                        return this;
+                    }
+                }, {
                     key: 'heartbeat',
-                    value: function heartbeat() {
-                        var outgoing = arguments.length <= 0 || arguments[0] === undefined ? 10000 : arguments[0];
-                        var incoming = arguments.length <= 1 || arguments[1] === undefined ? 10000 : arguments[1];
-
-                        this.settings.heartbeat = {
-                            outgoing: outgoing,
-                            incoming: incoming
-                        };
+                    value: function heartbeat(outgoing, incoming) {
+                        this.settings.heartbeat.outgoing = outgoing;
+                        this.settings.heartbeat.incoming = incoming;
                         return this;
                     }
 
                     /* @ngInject */
                 }, {
                     key: '$get',
-                    value: function $get($q, $log, $rootScope, Stomp) {
-                        return new ngStompWebSocket(this.settings, $q, $log, $rootScope, Stomp);
+                    value: function $get($q, $log, $rootScope, $timeout, Stomp) {
+                        return new ngStompWebSocket(this.settings, $q, $log, $rootScope, $timeout, Stomp);
                     }
                 }]);
 

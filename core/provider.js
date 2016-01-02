@@ -3,7 +3,13 @@ import ngStompWebSocket from './service';
 export default class ngstompProvider {
 
     constructor() {
-        this.settings = {};
+        this.settings = {
+            timeOut : 5000,
+            heartbeat : {
+                outgoing : 10000,
+                incoming : 10000
+            }
+        };
     }
 
     credential(login, password) {
@@ -37,17 +43,20 @@ export default class ngstompProvider {
         return this;
     }
 
-    heartbeat(outgoing = 10000, incoming = 10000) {
-        this.settings.heartbeat = {
-            outgoing : outgoing,
-            incoming : incoming
-        };
+    reconnectAfter(numberInSeconds) {
+        this.settings.timeOut = numberInSeconds * 1000;
+        return this;
+    }
+
+    heartbeat(outgoing, incoming) {
+        this.settings.heartbeat.outgoing = outgoing;
+        this.settings.heartbeat.incoming = incoming;
         return this;
     }
 
     /* @ngInject */
-    $get($q, $log, $rootScope, Stomp) {
-        return new ngStompWebSocket(this.settings, $q, $log, $rootScope, Stomp);
+    $get($q, $log, $rootScope, $timeout, Stomp) {
+        return new ngStompWebSocket(this.settings, $q, $log, $rootScope, $timeout, Stomp);
     }
 }
 

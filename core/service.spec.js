@@ -13,6 +13,7 @@ describe('Service', () => {
         "class": angular.noop,
         "debug": true,
         "vhost": "vhost",
+        "timeOut" : 5000,
         "heartbeat": {
             "outgoing": 1,
             "incoming": 2
@@ -26,11 +27,13 @@ describe('Service', () => {
         aConnection = { unsubscribe : angular.noop },
         stompClient = { connect : x => x, heartbeat : {}, subscribe : () => aConnection, send : angular.noop, disconnect : func => func() },
         $log = {},
-        $rootScope = { $$phase : false, $apply : angular.noop };
+        $rootScope = { $$phase : false, $apply : angular.noop },
+        $timeout;
 
     let ngStomp;
 
     beforeEach(() => {
+        $timeout = jasmine.createSpy('$timeout');
         spyOn($q, 'defer').and.returnValue(defered);
         spyOn(defered, 'resolve').and.callThrough();
         spyOn(defered, 'reject').and.callThrough();
@@ -43,7 +46,21 @@ describe('Service', () => {
         spyOn(stompClient, 'disconnect').and.callThrough();
         spyOn($rootScope, '$apply').and.callThrough();
         spyOn(aConnection, 'unsubscribe').and.callThrough();
-        ngStomp = new NgStomp(settings, $q, $log, $rootScope, Stomp);
+        ngStomp = new NgStomp(settings, $q, $log, $rootScope, $timeout, Stomp);
+    });
+
+    it('should be defined with custom settings', () => {
+        ngStomp = new NgStomp({
+            "url": "http://connection.com/url",
+            "login": "login",
+            "password": "password",
+            "class": angular.noop,
+            "debug": true,
+            "vhost": "vhost"
+        }, $q, $log, $rootScope, $timeout, Stomp);
+        expect(stompClient.connect.calls.argsFor(0)[0]).toEqual(settings.login);
+        expect(stompClient.connect.calls.argsFor(0)[1]).toEqual(settings.password);
+        expect(stompClient.connect.calls.argsFor(0)[4]).toEqual(settings.vhost);
     });
 
     it('should be coherent object', () => {
@@ -124,9 +141,13 @@ describe('Service', () => {
         });
 
         it('should handle a disconnection', () => {
-            let reconnectOnError = stompClient.connect.calls.argsFor(0)[3];
+            let timeOutreconnectOnError = stompClient.connect.calls.argsFor(0)[3];
             $rootScope.$$phase = true;
-            reconnectOnError();
+
+            timeOutreconnectOnError();
+            $timeout.calls.first().args[0]();
+
+            expect($timeout.calls.first().args[1]).toBe(settings.timeOut);
             expect(stompClient.connect.calls.argsFor(1)[0]).toEqual(settings.login);
             expect(stompClient.connect.calls.argsFor(1)[1]).toEqual(settings.password);
             expect(stompClient.connect.calls.argsFor(1)[4]).toEqual(settings.vhost);
