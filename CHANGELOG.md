@@ -1,3 +1,13 @@
+<a name="0.6.1"></a>
+## [0.6.1](https://github.com/davinkevin/AngularStompDK/compare/v0.6.0...v0.6.1) (2016-01-02)
+
+
+### Features
+
+* **re-connection:** allow configuration to trigger re-connection every X seconds ([6ce93b0](https://github.com/davinkevin/AngularStompDK/commit/6ce93b0))
+
+
+
 <a name="0.6.0"></a>
 # [0.6.0](https://github.com/davinkevin/AngularStompDK/compare/v0.5.2...v0.6.0) (2016-01-01)
 
