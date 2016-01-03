@@ -39,7 +39,7 @@ gulp.task('changelog', (cb) => {
 });
 
 gulp.task('commit-changelog', (cb) => {
-    let sources = [ `${paths.root}/CHANGELOG.md`, `${paths.root}/package.json` ];
+    let sources = [ `${paths.root}/CHANGELOG.md`, `${paths.root}/package.json`, `${paths.root}/bower.json` ];
     gulp.src(sources)
         .pipe(git.add())
         .pipe(git.commit(`chore(release): ${pkg.version}`))
