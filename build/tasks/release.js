@@ -8,6 +8,7 @@ import git from 'gulp-git';
 import runSequence from 'run-sequence';
 
 import pkg from '../../package.json';
+import bowerJson from '../../bower.json';
 
 let argv = util.env;
 
@@ -24,7 +25,7 @@ gulp.task('bump', (cb) => {
     }
 
     pkg.version = semver.inc(pkg.version, argv.type);
-    gulp.src([paths.packageJson])
+    gulp.src([paths.packageJson, paths.bowerJson])
         .pipe(bump({ version: pkg.version }))
         .pipe(gulp.dest('./'))
         .on('end', cb);

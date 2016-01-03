@@ -11,6 +11,7 @@ export default {
   root : root,
   systemConfigJs : `${srcDirName}/config.js`,
   packageJson : `${root}/package.json`,
+  bowerJson : `${root}/bower.json`,
   changeLog : `${root}/CHANGELOG.md`,
   srcDir: `${root}/${srcDirName}`,
   releaseDir: `${root}/${releaseDirName}`,
