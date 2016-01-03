@@ -1,0 +1,29 @@
+{
+  "name": "AngularStompDK",
+  "version": "0.6.1",
+  "main": "dist/angular-stomp.js",
+  "ignore": [
+    "build",
+    "core",
+    ".bowerrc",
+    ".codeclimate.yml",
+    ".eslintrc",
+    ".gitignore",
+    ".jshitrc",
+    ".travis.yml",
+    "bower.json",
+    "CHANGELOG.md",
+    "config.js",
+    "gulpfile.babel.js",
+    "karma.conf.js",
+    "package.json",
+    "README.md"
+  ],
+  "dependencies": {
+    "angular": ">=1.2.0",
+    "stomp-websocket": "~2.3.0"
+  },
+  "devDependencies": {
+    "angular-mocks": ">=1.2.0"
+  }
+}
