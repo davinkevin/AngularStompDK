@@ -90,6 +90,21 @@ describe('Service', () => {
         expect(ngStomp.connections.has('/topic/foo')).toBeTruthy();
     });
 
+    it('should subscribe with json', () => {
+        /* Given */
+        let pivotValue = 0,
+            callBack = (val) => pivotValue = val.body.a;
+
+        /* When */
+        ngStomp.subscribe('/topic/foo', callBack, {}, {}, true);
+        stompClient.subscribe.calls.mostRecent().args[1]({ body : "{ \"a\":10, \"b\":5 }"});
+
+        /* Then */
+        expect(pivotValue).toBe(10);
+        expect(ngStomp.connections.has('/topic/foo')).toBeTruthy();
+    });
+
+
     it('should return builder on subscribeTo', () => {
         let builder = ngStomp.subscribeTo('aTopic');
         expect(builder.topic).toBe('aTopic');

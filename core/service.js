@@ -39,10 +39,10 @@ export default class ngStompWebSocket {
         return this.promiseResult;
     }
 
-    subscribe(url, callback, header = {}, scope) {
+    subscribe(url, callback, header = {}, scope, bodyInJson = false) {
         this.promiseResult.then(() => {
-            this.$stompSubscribe(url, callback, header, scope);
-            this.unRegisterScopeOnDestroy(scope, url);
+            this.$stompSubscribe(url, callback, header, scope, bodyInJson);
+            this.$unRegisterScopeOnDestroy(scope, url);
         });
         return this;
     }
@@ -77,13 +77,14 @@ export default class ngStompWebSocket {
         return disconnectionPromise.promise;
     }
 
-    $stompSubscribe(queue, callback, header, scope) {
-        let self = this;
-        let subscription = self.stompClient.subscribe(queue, function() {
-            callback.apply(self.stompClient, arguments);
-            self.$digestStompAction();
+    $stompSubscribe(queue, callback, header, scope, bodyInJson) {
+        let subscription = this.stompClient.subscribe(queue, (message) => {
+            if (bodyInJson)
+                message.body = JSON.parse(message.body);
+            callback(message);
+            this.$digestStompAction();
         }, header);
-        this.connections.set(queue, { sub : subscription, callback : callback, header : header, scope : scope });
+        this.connections.set(queue, { sub : subscription, callback : callback, header : header, scope : scope, json : bodyInJson });
     }
 
     $stompUnSubscribe(queue) {
@@ -107,15 +108,13 @@ export default class ngStompWebSocket {
         this.promiseResult = this.deferred.promise;
     }
 
-    unRegisterScopeOnDestroy(scope, url) {
+    $unRegisterScopeOnDestroy(scope, url) {
         if (scope !== undefined && angular.isFunction(scope.$on))
             scope.$on('$destroy', () => this.unsubscribe(url) );
     }
 
     $reconnectAll() {
         this.connections
-            .forEach(
-                (val, key) => this.subscribe(key, val.callback, val.header, val.scope)
-            );
+            .forEach( (val, key) => this.subscribe(key, val.callback, val.header, val.scope, val.json) );
     }
 }

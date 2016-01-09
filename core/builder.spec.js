@@ -22,7 +22,7 @@ describe('Builder', () => {
 
     it('should subscribe with default parameters', () => {
         builder.build();
-        expect(ngStomp.subscribe.calls.mostRecent().args).toEqual([firstTopic, angular.noop, {}, {}])
+        expect(ngStomp.subscribe.calls.mostRecent().args).toEqual([firstTopic, angular.noop, {}, {}, false])
     });
 
     it('should subscribe', () => {
@@ -34,9 +34,10 @@ describe('Builder', () => {
             .callback(aCallback)
             .withHeaders(headers)
             .bindTo($scope)
+            .withBodyInJson()
             .build();
 
-        expect(ngStomp.subscribe.calls.mostRecent().args).toEqual([firstTopic, aCallback, headers, $scope]);
+        expect(ngStomp.subscribe.calls.mostRecent().args).toEqual([firstTopic, aCallback, headers, $scope, true]);
     });
 
     it('should subscribe with chaining', () => {
@@ -49,10 +50,10 @@ describe('Builder', () => {
             .withHeaders(headers)
             .bindTo($scope)
             .and()
-            .build();
+            .connect();
 
-        expect(ngStomp.subscribe.calls.argsFor(0)).toEqual([firstTopic, aCallback, headers, $scope]);
-        expect(ngStomp.subscribe.calls.argsFor(1)).toEqual([secondTopic, angular.noop, {}, {}]);
+        expect(ngStomp.subscribe.calls.argsFor(0)).toEqual([firstTopic, aCallback, headers, $scope, false]);
+        expect(ngStomp.subscribe.calls.argsFor(1)).toEqual([secondTopic, angular.noop, {}, {}, false]);
     });
 
 

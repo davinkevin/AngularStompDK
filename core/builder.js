@@ -11,6 +11,7 @@ export default class SubscribeBuilder {
         this.aCallback = angular.noop;
         this.headers = {};
         this.scope = {};
+        this.json = false;
     }
 
     callback(aCallback) {
@@ -28,8 +29,17 @@ export default class SubscribeBuilder {
         return this;
     }
 
+    withBodyInJson() {
+        this.json = true;
+        return this;
+    }
+
     build() {
-        return this.ngStomp.subscribe(this.topic, this.aCallback, this.headers, this.scope);
+        return this.ngStomp.subscribe(this.topic, this.aCallback, this.headers, this.scope, this.json);
+    }
+
+    connect() {
+        return this.build();
     }
 
     and() {

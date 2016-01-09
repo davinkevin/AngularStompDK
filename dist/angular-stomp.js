@@ -476,6 +476,7 @@ $__System.register("2", ["3", "4"], function (_export) {
                     this.aCallback = angular.noop;
                     this.headers = {};
                     this.scope = {};
+                    this.json = false;
                 }
 
                 _createClass(SubscribeBuilder, [{
@@ -497,9 +498,20 @@ $__System.register("2", ["3", "4"], function (_export) {
                         return this;
                     }
                 }, {
+                    key: "withBodyInJson",
+                    value: function withBodyInJson() {
+                        this.json = true;
+                        return this;
+                    }
+                }, {
                     key: "build",
                     value: function build() {
-                        return this.ngStomp.subscribe(this.topic, this.aCallback, this.headers, this.scope);
+                        return this.ngStomp.subscribe(this.topic, this.aCallback, this.headers, this.scope, this.json);
+                    }
+                }, {
+                    key: "connect",
+                    value: function connect() {
+                        return this.build();
                     }
                 }, {
                     key: "and",
@@ -1681,13 +1693,15 @@ $__System.register('37', ['2', '3', '4', '36', '38'], function (_export) {
                 }, {
                     key: 'subscribe',
                     value: function subscribe(url, callback, header, scope) {
-                        var _this2 = this;
-
                         if (header === undefined) header = {};
 
+                        var _this2 = this;
+
+                        var bodyInJson = arguments.length <= 4 || arguments[4] === undefined ? false : arguments[4];
+
                         this.promiseResult.then(function () {
-                            _this2.$stompSubscribe(url, callback, header, scope);
-                            _this2.unRegisterScopeOnDestroy(scope, url);
+                            _this2.$stompSubscribe(url, callback, header, scope, bodyInJson);
+                            _this2.$unRegisterScopeOnDestroy(scope, url);
                         });
                         return this;
                     }
@@ -1737,13 +1751,15 @@ $__System.register('37', ['2', '3', '4', '36', '38'], function (_export) {
                     }
                 }, {
                     key: '$stompSubscribe',
-                    value: function $stompSubscribe(queue, callback, header, scope) {
-                        var self = this;
-                        var subscription = self.stompClient.subscribe(queue, function () {
-                            callback.apply(self.stompClient, arguments);
-                            self.$digestStompAction();
+                    value: function $stompSubscribe(queue, callback, header, scope, bodyInJson) {
+                        var _this6 = this;
+
+                        var subscription = this.stompClient.subscribe(queue, function (message) {
+                            if (bodyInJson) message.body = JSON.parse(message.body);
+                            callback(message);
+                            _this6.$digestStompAction();
                         }, header);
-                        this.connections.set(queue, { sub: subscription, callback: callback, header: header, scope: scope });
+                        this.connections.set(queue, { sub: subscription, callback: callback, header: header, scope: scope, json: bodyInJson });
                     }
                 }, {
                     key: '$stompUnSubscribe',
@@ -1770,21 +1786,21 @@ $__System.register('37', ['2', '3', '4', '36', '38'], function (_export) {
                         this.promiseResult = this.deferred.promise;
                     }
                 }, {
-                    key: 'unRegisterScopeOnDestroy',
-                    value: function unRegisterScopeOnDestroy(scope, url) {
-                        var _this6 = this;
+                    key: '$unRegisterScopeOnDestroy',
+                    value: function $unRegisterScopeOnDestroy(scope, url) {
+                        var _this7 = this;
 
                         if (scope !== undefined && angular.isFunction(scope.$on)) scope.$on('$destroy', function () {
-                            return _this6.unsubscribe(url);
+                            return _this7.unsubscribe(url);
                         });
                     }
                 }, {
                     key: '$reconnectAll',
                     value: function $reconnectAll() {
-                        var _this7 = this;
+                        var _this8 = this;
 
                         this.connections.forEach(function (val, key) {
-                            return _this7.subscribe(key, val.callback, val.header, val.scope);
+                            return _this8.subscribe(key, val.callback, val.header, val.scope, val.json);
                         });
                     }
                 }]);
