@@ -1,3 +1,15 @@
+<a name="0.7.0"></a>
+# [0.7.0](https://github.com/davinkevin/AngularStompDK/compare/v0.6.2...v0.7.0) (2016-01-09)
+
+
+### Features
+
+* **license:** add Apache License ([907e4c8](https://github.com/davinkevin/AngularStompDK/commit/907e4c8))
+* **readme:** add better description and let only the builder pattern to subscribe ([4e9730d](https://github.com/davinkevin/AngularStompDK/commit/4e9730d))
+* **service:** support auto-conversion in JSON of message body ([ed543f2](https://github.com/davinkevin/AngularStompDK/commit/ed543f2))
+
+
+
 <a name="0.6.2"></a>
 ## [0.6.2](https://github.com/davinkevin/AngularStompDK/compare/v0.6.1...v0.6.2) (2016-01-03)
 
