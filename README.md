@@ -106,92 +106,47 @@ Don't forget to import this underlying library in your page via Bower (and HTML 
 Use it inside your controller (or everywhere you want !)
 
 ```js
-    angular.controller('myController', function(ngstomp) {
-    
-        var webSocketEndPoint = '/topic/item', items = [];
+ angular.controller('myController', function($scope, ngstomp) {
 
-        ngstomp
-            .subscribe(webSocketEndPoint, whatToDoWhenMessageComming);
+    var items = [];
 
-        function whatToDoWhenMessageComming(message) {
-            items.push(JSON.parse(message.body));
-        }
-     });
+    ngstomp
+        .subscribeTo('/topic/item')
+            .callback(whatToDoWhenMessageComming)
+        .connect()
+
+    function whatToDoWhenMessageComming(message) {
+        items.push(JSON.parse(message.body));
+    }
+ });
 ```
 
 You can chain multiple subscribe and add headers to your subscription :
 
 ```js
- angular.controller('myController', function(ngstomp) {
-    
-    var items = [], 
-        headers = {
-        foo : 'bar'            
-    };
-    
-    ngstomp
-        .subscribe('/topic/item', whatToDoWhenMessageComming)
-        .subscribe('/queue/message', whatToDoWhenMessageComming, headers);
-            
-    function whatToDoWhenMessageComming(message) {
-        items.push(JSON.parse(message.body));
-    }
- });
-```
-
-Don't forget to unsubscribe your callback when the $scope is detroyed (or the call will keep happening even after the scope has been detroyed)
-
-```js
  angular.controller('myController', function($scope, ngstomp) {
-    
-    var items = [], 
-        headers = {
+    var vm = this, headers = {
             foo : 'bar'            
         };
+    vm.items = [];
     
+
     ngstomp
-        .subscribe('/topic/item', whatToDoWhenMessageComming)
-        .subscribe('/queue/message', whatToDoWhenMessageComming, headers);
-        
-    $scope.$on('$destroy', function() {
-        ngstomp
-            .unsubscribe('/topic/item', whatToDoWhenUnsubscribe);
-    });
-    
+        .subscribeTo('/topic/item1')
+            .callback(whatToDoWhenMessageComming)
+        .and()
+        .subscribeTo('/topic/item2')
+            .callback(whatToDoWhenMessageComming)
+            .withHeaders(headers)
+        .connect();
+
     function whatToDoWhenMessageComming(message) {
-        items.push(JSON.parse(message.body));
-    }
-    
-    function whatToDoWhenUnsubscribe() {
-        console.log('Unsubscribed !! :D');
+        vm.items.push(JSON.parse(message.body));
     }
  });
 ```
 
-A simple way to unsubscribe automatically is to give the $scope as fourth parameters to let the library register the disconnection when the $scope will be destroyed. A better syntax could be used with the builder pattern (see above).
-
-```js
- angular.controller('myController', function($scope, ngstomp) {
-
-    var items = [], 
-        headers = {
-            foo : 'bar'            
-        };
-
-    ngstomp
-        .subscribe('/topic/item', whatToDoWhenMessageComming, {}, $scope)
-        .subscribe('/queue/message', whatToDoWhenMessageComming, headers, $scope);
-
-    function whatToDoWhenMessageComming(message) {
-        items.push(JSON.parse(message.body));
-    }
- });
-```
-
-#### 3. 2. Builder Pattern to subscribe
-----------------
-
-A more fluent API is available to subscribe with ngstomp : 
+If the body has to be in JSON, let the library handle the transformation of `message.body`
 
 ```js
  angular.controller('myController', function($scope, ngstomp) {
@@ -200,39 +155,38 @@ A more fluent API is available to subscribe with ngstomp :
 
     ngstomp
         .subscribeTo('/topic/item')
-                .callback(whatToDoWhenMessageComming)
-                .bindTo($scope)
-        .build()
+            .callback(whatToDoWhenMessageComming)
+            .withBodyInJson()
+        .connect();
 
     function whatToDoWhenMessageComming(message) {
-        items.push(JSON.parse(message.body));
+        items.push(message.body);
     }
  });
 ```
 
-And if you want subbscribe to multiple topic, you can chain the builder pattern :
+Give to the builder the $scope to allow the system to un-register the connection after the $scope destruction : 
+
+
 ```js
  angular.controller('myController', function($scope, ngstomp) {
-    var vm = this;
-    vm.items = [];
+
+    var items = [];
 
     ngstomp
-        .subscribeTo('/topic/item1')
-                .callback(whatToDoWhenMessageComming)
-                .bindTo($scope)
-            .and()
-        .subscribeTo('/topic/item2')
-                .callback(whatToDoWhenMessageComming)
-                .withHeaders({})
-        .build();
+        .subscribeTo('/topic/item')
+            .callback(whatToDoWhenMessageComming)
+            .withBodyInJson()
+            .bindTo($scope)
+        .connect();
 
     function whatToDoWhenMessageComming(message) {
-        vm.items.push(JSON.parse(message.body));
+        items.push(message.body);
     }
  });
 ```
 
-#### 3. 3. Send information
+#### 3. 2. Send information
 ----------------
 
 You can send back information to the Web-Socket : 
@@ -243,7 +197,10 @@ You can send back information to the Web-Socket :
     var items = [];
 
     ngstomp
-        .subscribe('/topic/item', whatToDoWhenMessageComming, $scope);
+        .subscribeTo('/topic/item') 
+            .callback(whatToDoWhenMessageComming)
+            .bindTo($scope)
+        .connect();
 
     function whatToDoWhenMessageComming(message) {
         items.push(JSON.parse(message.body));
@@ -253,8 +210,7 @@ You can send back information to the Web-Socket :
         stompHeaders = {headers1 : 'xx', headers2 : 'yy'};
          
     this.sendDataToWS = function(message) {
-        ngstomp
-            .send('/topic/item/message', objectToSend, stompHeaders);
+        ngstomp.send('/topic/item/message', objectToSend, stompHeaders);
     }
  });
 ```
