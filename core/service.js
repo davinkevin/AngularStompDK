@@ -84,12 +84,13 @@ export default class ngStompWebSocket {
             callback(message);
             this.$digestStompAction();
         }, header);
-        this.connections.set(queue, { sub : subscription, callback : callback, header : header, scope : scope, json : bodyInJson });
+
+        this.$$addToConnectionQueue(queue, { sub : subscription, callback : callback, header : header, scope : scope, json : bodyInJson });
     }
 
     $stompUnSubscribe(queue) {
-        let subscription = this.connections.get(queue).sub;
-        subscription.unsubscribe();
+        let connections = this.connections.get(queue);
+        connections.forEach((c) => c.sub.unsubscribe());
         this.connections.delete(queue);
     }
 
@@ -115,6 +116,25 @@ export default class ngStompWebSocket {
 
     $reconnectAll() {
         this.connections
-            .forEach( (val, key) => this.subscribe(key, val.callback, val.header, val.scope, val.json) );
+            .forEach( (val, key) =>
+                val.forEach(
+                    c => this.subscribe(key, c.callback, c.header, c.scope, c.json)
+                )
+             );
+    }
+
+    $$unsubscribeOf(connection) {
+        this.connections
+            .get(connection.queue)
+            .filter(c =>
+                        c.callback === connection.callback &&
+                        c.header === connection.header &&
+                        c.scope === connection.scope)
+            .forEach((c) => c.sub.unsubscribe())
+    }
+
+    $$addToConnectionQueue(queue, connection) {
+        if (!this.connections.has(queue)) this.connections.set(queue, []);
+        this.connections.get(queue).push(connection);
     }
 }
