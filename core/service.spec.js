@@ -1,6 +1,7 @@
 /**
  * Created by kevin on 21/12/2015.
  */
+//import {describe, it, expect} from 'jasmine';
 import NgStomp from './service';
 import angular from 'angular';
 
@@ -129,6 +130,26 @@ describe('Service', () => {
         expect(aConnection.unsubscribe).toHaveBeenCalled();
     });
 
+    it('should unsubscribe from unsubscriber', () => {
+        /* Given */
+        let topic = 'foo';
+        let callback1 = x => x, header1 = {}, scope1 = {}, sub1 = jasmine.createSpyObj('sub1', ['unsubscribe']),
+            callback2 = y => y, header2 = {}, scope2 = {}, sub2 = jasmine.createSpyObj('sub2', ['unsubscribe']);
+
+        ngStomp.connections.set(topic, [
+            {callback : callback1, header : header1, scope : scope1, sub : sub1},
+            {callback : callback2, header : header2, scope : scope2, sub : sub2}
+        ]);
+
+        /* When */
+        ngStomp.$$unsubscribeOf({queue : topic, callback : callback2, header : header2, scope : scope2});
+
+        /* Then */
+        expect(sub1.unsubscribe).not.toHaveBeenCalled();
+        expect(sub2.unsubscribe).toHaveBeenCalled();
+        expect(ngStomp.connections.get(topic).length).toBe(1);
+    });
+
     describe('when connected', () => {
 
         beforeEach(() => {
@@ -169,6 +190,7 @@ describe('Service', () => {
         });
 
     });
+
 
 
 });

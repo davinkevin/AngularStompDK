@@ -124,17 +124,21 @@ export default class ngStompWebSocket {
     }
 
     $$unsubscribeOf(connection) {
-        this.connections
-            .get(connection.queue)
-            .filter(c =>
-                        c.callback === connection.callback &&
-                        c.header === connection.header &&
-                        c.scope === connection.scope)
-            .forEach((c) => c.sub.unsubscribe())
+        let queueConnection = this.connections.get(connection.queue);
+
+        queueConnection
+            .filter(c => this.$$connectionEquality(c, connection))
+            .forEach(c => c.sub.unsubscribe());
+
+        this.connections.set(connection.queue, queueConnection.filter(c => !this.$$connectionEquality(c, connection)));
     }
 
     $$addToConnectionQueue(queue, connection) {
         if (!this.connections.has(queue)) this.connections.set(queue, []);
         this.connections.get(queue).push(connection);
+    }
+
+    $$connectionEquality(c1, c2) {
+        return c1.callback === c2.callback && c1.header === c2.header && c1.scope === c2.scope
     }
 }
