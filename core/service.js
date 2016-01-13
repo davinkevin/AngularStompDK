@@ -14,7 +14,7 @@ export default class ngStompWebSocket {
         this.$log = $log;
         this.Stomp = Stomp;
         this.$timeout = $timeout;
-        this.connections = new Map();
+        this.connections = [];
 
         this.connect();
     }
@@ -85,13 +85,15 @@ export default class ngStompWebSocket {
             this.$digestStompAction();
         }, header);
 
-        this.$$addToConnectionQueue(queue, { sub : subscription, callback : callback, header : header, scope : scope, json : bodyInJson });
+        this.$$addToConnectionQueue({ queue : queue, sub : subscription, callback : callback, header : header, scope : scope, json : bodyInJson });
     }
 
     $stompUnSubscribe(queue) {
-        let connections = this.connections.get(queue);
-        connections.forEach((c) => c.sub.unsubscribe());
-        this.connections.delete(queue);
+        this.connections
+            .filter(c => c.queue === queue)
+            .forEach((c) => c.sub.unsubscribe());
+
+        this.connections = this.connections.filter(c => c.queue != queue);
     }
 
     $digestStompAction() {
@@ -115,30 +117,22 @@ export default class ngStompWebSocket {
     }
 
     $reconnectAll() {
-        this.connections
-            .forEach( (val, key) =>
-                val.forEach(
-                    c => this.subscribe(key, c.callback, c.header, c.scope, c.json)
-                )
-             );
+        this.connections.forEach(c => this.subscribe(c.queue, c.callback, c.header, c.scope, c.json));
     }
 
     $$unsubscribeOf(connection) {
-        let queueConnection = this.connections.get(connection.queue);
-
-        queueConnection
+        this.connections
             .filter(c => this.$$connectionEquality(c, connection))
             .forEach(c => c.sub.unsubscribe());
 
-        this.connections.set(connection.queue, queueConnection.filter(c => !this.$$connectionEquality(c, connection)));
+        this.connections = this.connections.filter(c => !this.$$connectionEquality(c, connection));
     }
 
-    $$addToConnectionQueue(queue, connection) {
-        if (!this.connections.has(queue)) this.connections.set(queue, []);
-        this.connections.get(queue).push(connection);
+    $$addToConnectionQueue(connection) {
+        this.connections.push(connection);
     }
 
     $$connectionEquality(c1, c2) {
-        return c1.callback === c2.callback && c1.header === c2.header && c1.scope === c2.scope
+        return c1.queue === c2.queue && c1.callback === c2.callback && c1.header === c2.header && c1.scope === c2.scope
     }
 }
