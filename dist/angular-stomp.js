@@ -480,6 +480,7 @@ $__System.register("2", ["3", "4"], function (_export) {
                         this.connections.forEach(function (c) {
                             return _this.$$unsubscribeOf(c);
                         });
+                        this.connections = [];
                     }
                 }, {
                     key: "unsubscribeOf",
@@ -490,6 +491,10 @@ $__System.register("2", ["3", "4"], function (_export) {
                             return c.queue === topic;
                         }).forEach(function (c) {
                             return _this2.$$unsubscribeOf(c);
+                        });
+
+                        this.connections = this.connections.filter(function (c) {
+                            return c.queue !== topic;
                         });
                     }
                 }, {
@@ -1891,17 +1896,30 @@ $__System.register('38', ['3', '4', '5', '37', '39'], function (_export) {
                 }, {
                     key: '$$unsubscribeOf',
                     value: function $$unsubscribeOf(connection) {
-                        this.connections.get(connection.queue).filter(function (c) {
-                            return c.callback === connection.callback && c.header === connection.header && c.scope === connection.scope;
+                        var _this9 = this;
+
+                        var queueConnection = this.connections.get(connection.queue);
+
+                        queueConnection.filter(function (c) {
+                            return _this9.$$connectionEquality(c, connection);
                         }).forEach(function (c) {
                             return c.sub.unsubscribe();
                         });
+
+                        this.connections.set(connection.queue, queueConnection.filter(function (c) {
+                            return !_this9.$$connectionEquality(c, connection);
+                        }));
                     }
                 }, {
                     key: '$$addToConnectionQueue',
                     value: function $$addToConnectionQueue(queue, connection) {
                         if (!this.connections.has(queue)) this.connections.set(queue, []);
                         this.connections.get(queue).push(connection);
+                    }
+                }, {
+                    key: '$$connectionEquality',
+                    value: function $$connectionEquality(c1, c2) {
+                        return c1.callback === c2.callback && c1.header === c2.header && c1.scope === c2.scope;
                     }
                 }]);
 
