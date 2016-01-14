@@ -1,3 +1,23 @@
+<a name="0.8.0"></a>
+# [0.8.0](https://github.com/davinkevin/AngularStompDK/compare/v0.7.0...v0.8.0) (2016-01-14)
+
+
+### Bug Fixes
+
+* **unSubscribe:** don't remove connections if unRegistration from position ([1278bbe](https://github.com/davinkevin/AngularStompDK/commit/1278bbe))
+* **unSubscribe:** remove connection based on index attribute to prevent mis-organisation in the ar ([1b04d67](https://github.com/davinkevin/AngularStompDK/commit/1b04d67))
+* **unsubscriber:** change case of import ([c63a8d4](https://github.com/davinkevin/AngularStompDK/commit/c63a8d4))
+
+### Features
+
+* **unsubscriber:** allow to unsubscribe each subscription individually ([ca6115f](https://github.com/davinkevin/AngularStompDK/commit/ca6115f))
+
+### Performance Improvements
+
+* **service:** remove usage of set because two subscription can append to the same topic ([9898775](https://github.com/davinkevin/AngularStompDK/commit/9898775))
+
+
+
 <a name="0.7.0"></a>
 # [0.7.0](https://github.com/davinkevin/AngularStompDK/compare/v0.6.2...v0.7.0) (2016-01-09)
 

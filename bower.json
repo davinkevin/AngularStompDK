@@ -1,6 +1,6 @@
 {
   "name": "AngularStompDK",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "main": "dist/angular-stomp.js",
   "ignore": [
     "build",
