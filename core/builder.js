@@ -1,17 +1,16 @@
 /**
  * Created by kevin on 14/12/2015.
  */
+import Unsubscriber from './unSubscriber'
 
 export default class SubscribeBuilder {
 
     /*@ngNoInject*/
     constructor(ngStomp, topic) {
         this.ngStomp = ngStomp;
-        this.topic = topic;
-        this.aCallback = angular.noop;
-        this.headers = {};
-        this.scope = {};
-        this.json = false;
+        this.connections = [];
+
+        this.subscribeTo(topic);
     }
 
     callback(aCallback) {
@@ -35,14 +34,27 @@ export default class SubscribeBuilder {
     }
 
     build() {
-        return this.ngStomp.subscribe(this.topic, this.aCallback, this.headers, this.scope, this.json);
+        return this.connect();
+    }
+
+    subscribeTo(topic) {
+        this.topic = topic;
+        this.aCallback = angular.noop;
+        this.headers = {};
+        this.scope = {};
+        this.json = false;
+
+        return this;
     }
 
     connect() {
-        return this.build();
+        this.and();
+        this.connections.forEach(c => this.ngStomp.subscribe(c.topic, c.callback, c.headers, c.scope, c.json));
+        return new Unsubscriber(this.ngStomp, this.connections);
     }
 
     and() {
-        return this.build();
+        this.connections.push({topic : this.topic, callback : this.aCallback, headers : this.headers, scope : this.scope, json : this.json});
+        return this;
     }
 }

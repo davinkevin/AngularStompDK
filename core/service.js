@@ -14,7 +14,7 @@ export default class ngStompWebSocket {
         this.$log = $log;
         this.Stomp = Stomp;
         this.$timeout = $timeout;
-        this.connections = new Map();
+        this.connections = [];
 
         this.connect();
     }
@@ -42,7 +42,6 @@ export default class ngStompWebSocket {
     subscribe(url, callback, header = {}, scope, bodyInJson = false) {
         this.promiseResult.then(() => {
             this.$stompSubscribe(url, callback, header, scope, bodyInJson);
-            this.$unRegisterScopeOnDestroy(scope, url);
         });
         return this;
     }
@@ -51,6 +50,7 @@ export default class ngStompWebSocket {
         return new SubscribeBuilder(this, topic);
     }
 
+    /* Deprecated */
     unsubscribe(url) {
         this.promiseResult.then(() => this.$stompUnSubscribe(url));
         return this;
@@ -84,13 +84,18 @@ export default class ngStompWebSocket {
             callback(message);
             this.$digestStompAction();
         }, header);
-        this.connections.set(queue, { sub : subscription, callback : callback, header : header, scope : scope, json : bodyInJson });
+
+        let connection = { queue : queue, sub : subscription, callback : callback, header : header, scope : scope, json : bodyInJson };
+        this.$$addToConnectionQueue(connection);
+        this.$unRegisterScopeOnDestroy(connection);
     }
 
     $stompUnSubscribe(queue) {
-        let subscription = this.connections.get(queue).sub;
-        subscription.unsubscribe();
-        this.connections.delete(queue);
+        this.connections
+            .filter(c => c.queue === queue)
+            .forEach((c) => c.sub.unsubscribe());
+
+        this.connections = this.connections.filter(c => c.queue != queue);
     }
 
     $digestStompAction() {
@@ -108,13 +113,28 @@ export default class ngStompWebSocket {
         this.promiseResult = this.deferred.promise;
     }
 
-    $unRegisterScopeOnDestroy(scope, url) {
-        if (scope !== undefined && angular.isFunction(scope.$on))
-            scope.$on('$destroy', () => this.unsubscribe(url) );
+    $unRegisterScopeOnDestroy(connection) {
+        if (connection.scope !== undefined && angular.isFunction(connection.scope.$on))
+            connection.scope.$on('$destroy', () => this.$$unSubscribeOf(connection) );
     }
 
     $reconnectAll() {
+        this.connections.forEach(c => this.subscribe(c.queue, c.callback, c.header, c.scope, c.json));
+    }
+
+    $$unSubscribeOf(connection) {
         this.connections
-            .forEach( (val, key) => this.subscribe(key, val.callback, val.header, val.scope, val.json) );
+            .filter(c => this.$$connectionEquality(c, connection))
+            .forEach(c => c.sub.unsubscribe());
+
+        this.connections = this.connections.filter(c => !this.$$connectionEquality(c, connection));
+    }
+
+    $$addToConnectionQueue(connection) {
+        this.connections.push(connection);
+    }
+
+    $$connectionEquality(c1, c2) {
+        return c1.queue === c2.queue && c1.callback === c2.callback && c1.header === c2.header && c1.scope === c2.scope
     }
 }

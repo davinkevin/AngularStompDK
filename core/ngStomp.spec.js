@@ -1,3 +1,4 @@
+//import {describe, it, expect} from 'jasmine';
 import AngularStompDK from './ngStomp';
 import 'angular-mocks';
 
