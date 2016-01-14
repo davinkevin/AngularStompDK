@@ -54,7 +54,7 @@ export default class SubscribeBuilder {
     }
 
     and() {
-        this.connections.push({topic : this.topic, callback : this.aCallback, headers : this.headers, scope : this.scope, json : this.json});
+        this.connections.push({topic : this.topic, callback : this.aCallback, headers : this.headers, scope : this.scope, json : this.json, index : this.connections.length+1});
         return this;
     }
 }

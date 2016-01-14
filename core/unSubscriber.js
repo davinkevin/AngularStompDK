@@ -22,8 +22,12 @@ export default class Unsubscriber {
         this.connections = this.connections.filter(c => c.queue !== topic);
     }
 
-    unSubscribeNth(number) {
-        this.$$unSubscribeOf(this.connections[number]);
+    unSubscribeNth(index) {
+        this.connections
+            .filter(c => c.index === index)
+            .forEach(c => this.$$unSubscribeOf(c));
+
+        this.connections = this.connections.filter(c => c.index !== index);
     }
 
     $$unSubscribeOf(c) {

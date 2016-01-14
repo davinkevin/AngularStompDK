@@ -48,14 +48,15 @@ describe('unSubscriber', () => {
 
     it('should unSubscribe the nth registration', () => {
         /* Given */
-        connections.push({queue : 'a', other : 'a'}, {queue : 'a', other : 'b'}, {queue : 'b'}, {queue : 'c'});
+        connections.push({queue : 'a', other : 'a', index : 1}, {queue : 'a', other : 'b', index : 2}, {queue : 'b', index : 3}, {queue : 'c', index : 4});
 
         /* When  */
         unSubscriber.unSubscribeNth(2);
+        unSubscriber.unSubscribeNth(1);
 
         /* Then  */
-        expect(ngStomp.spies.$$unSubscribeOf.calls.count()).toBe(1);
-        expect(unSubscriber.connections.length).toBe(4);
+        expect(ngStomp.spies.$$unSubscribeOf.calls.count()).toBe(2);
+        expect(unSubscriber.connections.length).toBe(2);
     });
 
 });

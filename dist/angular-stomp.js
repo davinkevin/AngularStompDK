@@ -499,9 +499,18 @@ $__System.register("2", ["3", "4"], function (_export) {
                     }
                 }, {
                     key: "unSubscribeNth",
-                    value: function unSubscribeNth(number) {
-                        this.$$unSubscribeOf(this.connections[number]);
-                        this.connections.splice(number - 1, 1);
+                    value: function unSubscribeNth(index) {
+                        var _this3 = this;
+
+                        this.connections.filter(function (c) {
+                            return c.index === index;
+                        }).forEach(function (c) {
+                            return _this3.$$unSubscribeOf(c);
+                        });
+
+                        this.connections = this.connections.filter(function (c) {
+                            return c.index !== index;
+                        });
                     }
                 }, {
                     key: "$$unSubscribeOf",
@@ -601,7 +610,7 @@ $__System.register('5', ['2', '3', '4'], function (_export) {
                 }, {
                     key: 'and',
                     value: function and() {
-                        this.connections.push({ topic: this.topic, callback: this.aCallback, headers: this.headers, scope: this.scope, json: this.json });
+                        this.connections.push({ topic: this.topic, callback: this.aCallback, headers: this.headers, scope: this.scope, json: this.json, index: this.connections.length + 1 });
                         return this;
                     }
                 }]);
