@@ -144,7 +144,7 @@ describe('Service', () => {
         ];
 
         /* When */
-        ngStomp.$$unsubscribeOf({queue : topic, callback : callback2, header : header2, scope : scope2});
+        ngStomp.$$unSubscribeOf({queue : topic, callback : callback2, header : header2, scope : scope2});
 
         /* Then */
         expect(sub1.unsubscribe).not.toHaveBeenCalled();

@@ -1,7 +1,7 @@
 /**
  * Created by kevin on 14/12/2015.
  */
-import Unsubscriber from './unsubscriber'
+import Unsubscriber from './unSubscriber'
 
 export default class SubscribeBuilder {
 

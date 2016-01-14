@@ -9,26 +9,26 @@ export default class Unsubscriber {
         this.connections = connections;
     }
 
-    unsubscribeAll() {
-        this.connections.forEach(c => this.$$unsubscribeOf(c))
+    unSubscribeAll() {
+        this.connections.forEach(c => this.$$unSubscribeOf(c))
         this.connections = [];
     }
 
-    unsubscribeOf(topic) {
+    unSubscribeOf(topic) {
         this.connections
             .filter(c => c.queue === topic)
-            .forEach(c => this.$$unsubscribeOf(c));
+            .forEach(c => this.$$unSubscribeOf(c));
 
         this.connections = this.connections.filter(c => c.queue !== topic);
     }
 
-    unsubscribeNth(number) {
-        this.$$unsubscribeOf(this.connections[number]);
+    unSubscribeNth(number) {
+        this.$$unSubscribeOf(this.connections[number]);
         this.connections.splice(number-1, 1);
     }
 
-    $$unsubscribeOf(c) {
-        this.ngStomp.$$unsubscribeOf({ queue: c.topic, callback: c.callback, header: c.headers, scope: c.scope});
+    $$unSubscribeOf(c) {
+        this.ngStomp.$$unSubscribeOf({ queue: c.topic, callback: c.callback, header: c.headers, scope: c.scope});
     }
 
 }

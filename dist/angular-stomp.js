@@ -473,24 +473,24 @@ $__System.register("2", ["3", "4"], function (_export) {
                 }
 
                 _createClass(Unsubscriber, [{
-                    key: "unsubscribeAll",
-                    value: function unsubscribeAll() {
+                    key: "unSubscribeAll",
+                    value: function unSubscribeAll() {
                         var _this = this;
 
                         this.connections.forEach(function (c) {
-                            return _this.$$unsubscribeOf(c);
+                            return _this.$$unSubscribeOf(c);
                         });
                         this.connections = [];
                     }
                 }, {
-                    key: "unsubscribeOf",
-                    value: function unsubscribeOf(topic) {
+                    key: "unSubscribeOf",
+                    value: function unSubscribeOf(topic) {
                         var _this2 = this;
 
                         this.connections.filter(function (c) {
                             return c.queue === topic;
                         }).forEach(function (c) {
-                            return _this2.$$unsubscribeOf(c);
+                            return _this2.$$unSubscribeOf(c);
                         });
 
                         this.connections = this.connections.filter(function (c) {
@@ -498,15 +498,15 @@ $__System.register("2", ["3", "4"], function (_export) {
                         });
                     }
                 }, {
-                    key: "unsubscribeNth",
-                    value: function unsubscribeNth(number) {
-                        this.$$unsubscribeOf(this.connections[number]);
+                    key: "unSubscribeNth",
+                    value: function unSubscribeNth(number) {
+                        this.$$unSubscribeOf(this.connections[number]);
                         this.connections.splice(number - 1, 1);
                     }
                 }, {
-                    key: "$$unsubscribeOf",
-                    value: function $$unsubscribeOf(c) {
-                        this.ngStomp.$$unsubscribeOf({ queue: c.topic, callback: c.callback, header: c.headers, scope: c.scope });
+                    key: "$$unSubscribeOf",
+                    value: function $$unSubscribeOf(c) {
+                        this.ngStomp.$$unSubscribeOf({ queue: c.topic, callback: c.callback, header: c.headers, scope: c.scope });
                     }
                 }]);
 
@@ -678,7 +678,6 @@ $__System.register('6', ['3', '4', '5', '7'], function (_export) {
 
                         this.promiseResult.then(function () {
                             _this2.$stompSubscribe(url, callback, header, scope, bodyInJson);
-                            _this2.$unRegisterScopeOnDestroy(scope, url);
                         });
                         return this;
                     }
@@ -687,6 +686,8 @@ $__System.register('6', ['3', '4', '5', '7'], function (_export) {
                     value: function subscribeTo(topic) {
                         return new SubscribeBuilder(this, topic);
                     }
+
+                    /* Deprecated */
                 }, {
                     key: 'unsubscribe',
                     value: function unsubscribe(url) {
@@ -737,7 +738,9 @@ $__System.register('6', ['3', '4', '5', '7'], function (_export) {
                             _this6.$digestStompAction();
                         }, header);
 
-                        this.$$addToConnectionQueue({ queue: queue, sub: subscription, callback: callback, header: header, scope: scope, json: bodyInJson });
+                        var connection = { queue: queue, sub: subscription, callback: callback, header: header, scope: scope, json: bodyInJson };
+                        this.$$addToConnectionQueue(connection);
+                        this.$unRegisterScopeOnDestroy(connection);
                     }
                 }, {
                     key: '$stompUnSubscribe',
@@ -771,11 +774,11 @@ $__System.register('6', ['3', '4', '5', '7'], function (_export) {
                     }
                 }, {
                     key: '$unRegisterScopeOnDestroy',
-                    value: function $unRegisterScopeOnDestroy(scope, url) {
+                    value: function $unRegisterScopeOnDestroy(connection) {
                         var _this7 = this;
 
-                        if (scope !== undefined && angular.isFunction(scope.$on)) scope.$on('$destroy', function () {
-                            return _this7.unsubscribe(url);
+                        if (connection.scope !== undefined && angular.isFunction(connection.scope.$on)) connection.scope.$on('$destroy', function () {
+                            return _this7.$$unSubscribeOf(connection);
                         });
                     }
                 }, {
@@ -788,8 +791,8 @@ $__System.register('6', ['3', '4', '5', '7'], function (_export) {
                         });
                     }
                 }, {
-                    key: '$$unsubscribeOf',
-                    value: function $$unsubscribeOf(connection) {
+                    key: '$$unSubscribeOf',
+                    value: function $$unSubscribeOf(connection) {
                         var _this9 = this;
 
                         this.connections.filter(function (c) {

@@ -6,9 +6,9 @@ export default class NgStomp {
 
     constructor() {
         this.spies = {
-            $$unsubscribeOf : spyOn(this, '$$unsubscribeOf').and.callThrough()
+            $$unSubscribeOf : spyOn(this, '$$unSubscribeOf').and.callThrough()
         }
     }
 
-    $$unsubscribeOf(){}
+    $$unSubscribeOf(){}
 }

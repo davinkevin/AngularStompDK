@@ -42,7 +42,6 @@ export default class ngStompWebSocket {
     subscribe(url, callback, header = {}, scope, bodyInJson = false) {
         this.promiseResult.then(() => {
             this.$stompSubscribe(url, callback, header, scope, bodyInJson);
-            this.$unRegisterScopeOnDestroy(scope, url);
         });
         return this;
     }
@@ -51,6 +50,7 @@ export default class ngStompWebSocket {
         return new SubscribeBuilder(this, topic);
     }
 
+    /* Deprecated */
     unsubscribe(url) {
         this.promiseResult.then(() => this.$stompUnSubscribe(url));
         return this;
@@ -85,7 +85,9 @@ export default class ngStompWebSocket {
             this.$digestStompAction();
         }, header);
 
-        this.$$addToConnectionQueue({ queue : queue, sub : subscription, callback : callback, header : header, scope : scope, json : bodyInJson });
+        let connection = { queue : queue, sub : subscription, callback : callback, header : header, scope : scope, json : bodyInJson };
+        this.$$addToConnectionQueue(connection);
+        this.$unRegisterScopeOnDestroy(connection);
     }
 
     $stompUnSubscribe(queue) {
@@ -111,16 +113,16 @@ export default class ngStompWebSocket {
         this.promiseResult = this.deferred.promise;
     }
 
-    $unRegisterScopeOnDestroy(scope, url) {
-        if (scope !== undefined && angular.isFunction(scope.$on))
-            scope.$on('$destroy', () => this.unsubscribe(url) );
+    $unRegisterScopeOnDestroy(connection) {
+        if (connection.scope !== undefined && angular.isFunction(connection.scope.$on))
+            connection.scope.$on('$destroy', () => this.$$unSubscribeOf(connection) );
     }
 
     $reconnectAll() {
         this.connections.forEach(c => this.subscribe(c.queue, c.callback, c.header, c.scope, c.json));
     }
 
-    $$unsubscribeOf(connection) {
+    $$unSubscribeOf(connection) {
         this.connections
             .filter(c => this.$$connectionEquality(c, connection))
             .forEach(c => c.sub.unsubscribe());
