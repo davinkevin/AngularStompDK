@@ -1,6 +1,7 @@
 /**
  * Created by kevin on 21/12/2015.
  */
+//import {describe, it, expect} from 'jasmine';
 import NgStomp from './service';
 import angular from 'angular';
 
@@ -87,7 +88,7 @@ describe('Service', () => {
 
         /* Then */
         expect(pivotValue).toBe(10);
-        expect(ngStomp.connections.has('/topic/foo')).toBeTruthy();
+        expect(ngStomp.connections.filter(c => c.queue ==='/topic/foo').length > 0).toBeTruthy();
     });
 
     it('should subscribe with json', () => {
@@ -101,7 +102,7 @@ describe('Service', () => {
 
         /* Then */
         expect(pivotValue).toBe(10);
-        expect(ngStomp.connections.has('/topic/foo')).toBeTruthy();
+        expect(ngStomp.connections.filter(c => c.queue ==='/topic/foo').length > 0).toBeTruthy();
     });
 
 
@@ -127,6 +128,29 @@ describe('Service', () => {
         expect(aScope.$on).toHaveBeenCalled();
         expect(aScope.$on.calls.mostRecent().args[0]).toBe('$destroy');
         expect(aConnection.unsubscribe).toHaveBeenCalled();
+    });
+
+    it('should unsubscribe from unsubscriber', () => {
+        /* Given */
+        let topic = 'foo';
+        let callback1 = x => x, header1 = {}, scope1 = {}, sub1 = jasmine.createSpyObj('sub1', ['unsubscribe']),
+            callback2 = y => y, header2 = {}, scope2 = {}, sub2 = jasmine.createSpyObj('sub2', ['unsubscribe']),
+            callback3 = y => y, header3 = {}, scope3 = {}, sub3 = jasmine.createSpyObj('sub3', ['unsubscribe']);
+
+        ngStomp.connections = [
+            {queue : topic, callback : callback1, header : header1, scope : scope1, sub : sub1},
+            {queue : topic, callback : callback2, header : header2, scope : scope2, sub : sub2},
+            {queue : 'bar', callback : callback3, header : header3, scope : scope3, sub : sub3}
+        ];
+
+        /* When */
+        ngStomp.$$unSubscribeOf({queue : topic, callback : callback2, header : header2, scope : scope2});
+
+        /* Then */
+        expect(sub1.unsubscribe).not.toHaveBeenCalled();
+        expect(sub2.unsubscribe).toHaveBeenCalled();
+        expect(sub3.unsubscribe).not.toHaveBeenCalled();
+        expect(ngStomp.connections.length).toBe(2);
     });
 
     describe('when connected', () => {
@@ -169,6 +193,7 @@ describe('Service', () => {
         });
 
     });
+
 
 
 });

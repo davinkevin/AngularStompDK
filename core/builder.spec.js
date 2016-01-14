@@ -1,14 +1,16 @@
 /**
  * Created by kevin on 15/12/2015.
  */
-
-import Builder from './builder';
+//import {describe, it, expect} from 'jasmine';
 import angular from 'angular';
+import Builder from './builder';
 
 describe('Builder', () => {
 
     let ngStomp = { subscribe : x => x}, firstTopic = 'aTopic', secondTopic = 'secondTopic';
     let builder;
+
+    let transformToConnection = (topic, callback, headers, scope, json, index) => ({topic : topic, callback : callback, headers : headers, scope : scope, json : json, index : index });
 
     beforeEach(() => {
         spyOn(ngStomp, 'subscribe').and.returnValue(new Builder(ngStomp, secondTopic));
@@ -30,14 +32,15 @@ describe('Builder', () => {
             headers = { foo : 'foo', bar : 'bar'},
             $scope = {};
 
-        builder
+        let unSubscriber = builder
             .callback(aCallback)
             .withHeaders(headers)
             .bindTo($scope)
             .withBodyInJson()
-            .build();
+            .connect();
 
         expect(ngStomp.subscribe.calls.mostRecent().args).toEqual([firstTopic, aCallback, headers, $scope, true]);
+        expect(unSubscriber.connections).toEqual([transformToConnection(firstTopic, aCallback, headers, $scope, true, 1)]);
     });
 
     it('should subscribe with chaining', () => {
@@ -45,15 +48,19 @@ describe('Builder', () => {
             headers = { foo : 'foo', bar : 'bar'},
             $scope = {};
 
-        builder
+        let unSubscriber = builder
             .callback(aCallback)
             .withHeaders(headers)
             .bindTo($scope)
-            .and()
-            .connect();
+        .and()
+            .subscribeTo(secondTopic)
+            .callback(angular.noop)
+        .connect();
 
         expect(ngStomp.subscribe.calls.argsFor(0)).toEqual([firstTopic, aCallback, headers, $scope, false]);
         expect(ngStomp.subscribe.calls.argsFor(1)).toEqual([secondTopic, angular.noop, {}, {}, false]);
+
+        expect(unSubscriber.connections).toEqual([transformToConnection(firstTopic, aCallback, headers, $scope, false, 1), transformToConnection(secondTopic, angular.noop, {}, {}, false, 2)]);
     });
 
 

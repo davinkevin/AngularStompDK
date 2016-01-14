@@ -1,6 +1,7 @@
 /**
  * Created by kevin on 20/12/2015.
  */
+//import {describe, it, expect} from 'jasmine';
 import Provider from './provider';
 import angular from 'angular';
 

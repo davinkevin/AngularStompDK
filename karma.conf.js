@@ -17,12 +17,13 @@ module.exports = function (config) {
         jspm: {
             config: 'config.js',
             loadFiles: ['core/**/*.spec.js'],
-            serveFiles: ['core/**/*.+(js|html|css)'],
+            serveFiles: ['core/**/*.+(js|html|css)', 'mock/**/*.+(js|html|css)'],
             stripExtension: true
         },
 
         proxies: {
             '/core/' : '/base/core/',
+            '/mock/' : '/base/mock/',
             '/jspm_packages/': '/base/jspm_packages/'
         },
 

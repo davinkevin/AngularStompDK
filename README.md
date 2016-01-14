@@ -32,7 +32,7 @@ angular.module('myApp', [ 'AngularStompDK' ])
 
 #### 1. 2. ES2015 and more
 ----------------
-You can now (since version 0.4.0) import AngularStompDK directly from JSPM (Package manager build upon SystemJS) 
+You can now (since version 0.4.0) import AngularStompDK directly from [JSPM](http://jspm.io/) (Package manager build upon SystemJS) 
 
 ```
 $ jspm install github:AngularStompDK
@@ -167,7 +167,6 @@ If the body has to be in JSON, let the library handle the transformation of `mes
 
 Give to the builder the $scope to allow the system to un-register the connection after the $scope destruction : 
 
-
 ```js
  angular.controller('myController', function($scope, ngstomp) {
 
@@ -210,7 +209,157 @@ You can send back information to the Web-Socket :
         stompHeaders = {headers1 : 'xx', headers2 : 'yy'};
          
     this.sendDataToWS = function(message) {
-        ngstomp.send('/topic/item/message', objectToSend, stompHeaders);
+        ngstomp
+            .send('/topic/item/message', objectToSend, stompHeaders);
+    }
+ });
+```
+
+When you send data, the system return a promise (like in standard rest communication :D), so you can chain multiple synchronous communication :  
+
+```js
+ angular.controller('myController', function($scope, ngstomp) {
+
+    var items = [];
+
+    ngstomp
+        .subscribeTo('/topic/item') 
+            .callback(whatToDoWhenMessageComming)
+            .bindTo($scope)
+        .connect();
+
+    function whatToDoWhenMessageComming(message) {
+        items.push(JSON.parse(message.body));
+    }
+
+    var objectToSend = { message : 'Hello Web-Socket'},
+        stompHeaders = {headers1 : 'xx', headers2 : 'yy'};
+         
+    this.sendDataToWS = function(message) {
+        ngstomp
+            .send('/topic/item/message1', objectToSend, stompHeaders)
+            .then(function() { return ngstom.send('/topic/item/message2', objectToSend, stompHeaders) });
+            .then(function() { return ngstom.send('/topic/item/message3', objectToSend, stompHeaders) });
+    }
+ });
+```
+
+#### 3. 3. UnSubscribe from topic
+----------------
+
+The `connect()` function return an object commonly called an unSubscriber. It handles all the logic of unSubscribing from a Stomp topic.
+You can, for example, unSubscribed from all the subject at once with the function `unSubscribeAll()`: 
+
+```js
+ angular.controller('myController', function(ngstomp) {
+    var vm = this;    
+
+    var unSubscriber = ngstomp
+                        .subscribeTo('/topic/item1')
+                            .callback(receiveFromTopic1)
+                        .and()
+                        .subscribeTo('/topic/item2')
+                            .callback(receiveFromTopic2)
+                        .connect();
+
+    function receiveFromTopic1(m) { vm.items.push(JSON.parse(m.body)); }
+    function receiveFromTopic2(m) { vm.items.push(JSON.parse(m.body)); }
+    
+    vm.unSubscribeAll = function() {
+        unSubscriber.unSubscribeAll();
+    }
+ });
+```
+
+Or you can choose to unSubscribed a subject by its topic url with the function `unSubscribeOf(TOPIC_URL)`:  
+
+```js
+ angular.controller('myController', function(ngstomp) {
+    var vm = this;    
+
+    var unSubscriber = ngstomp
+                        .subscribeTo('/topic/item1')
+                            .callback(receiveFromTopic1)
+                        .and()
+                        .subscribeTo('/topic/item2')
+                            .callback(receiveFromTopic2)
+                        .connect();
+
+
+    function receiveFromTopic1(m) { vm.items.push(JSON.parse(m.body)); }
+    function receiveFromTopic2(m) { vm.items.push(JSON.parse(m.body)); }
+    
+    vm.unSubOfTopic1 = function() {
+        unSubscriber.unSubscribeOf('/topic/item1');
+    }
+    
+    vm.unSubOfTopic2 = function() {
+        unSubscriber.unSubscribeOf('/topic/item2');
+    }
+ });
+```
+
+Because you can register the same topic with different parameters (callback, headers...), the function `unSubscribeOf(TOPIC_URL)` will unsubscribe from any topic with the same url, so it coul lead to multiple unsubscribe.
+If you want to unsubscribe from 1 topic specificaly, you have two solution : 
+
+First one, without doing chaining in subscription : 
+
+```js
+ angular.controller('myController', function(ngstomp) {
+    var vm = this;    
+
+    var unSubscriberFirst = ngstomp
+                        .subscribeTo('/topic/item1')
+                            .callback(receiveFromTopic1)
+                        .connect();
+    
+    var unSubscriberSecond = ngstomp
+                            .subscribeTo('/topic/item1')
+                                .callback(receiveFromTopic1WithDifferentAction)
+                                .withHeaders({foo : 'bar'})
+                            .connect();
+
+
+    function receiveFromTopic1(m) { vm.items.push(JSON.parse(m.body)); }
+    function receiveFromTopic1WithDifferentAction(m) { console.log(JSON.parse(m.body)); }
+    
+    vm.unSubOfFirst = function() {
+        unSubscriberFirst.unSubscribeAll();
+    }
+    
+    vm.unSubOfSecond = function() {
+        unSubscriberSecond.unSubscribeAll();
+    }
+ });
+```
+
+The previous version is too verbose and lead to multiple var declaration. You can use the function `unSubscribeNth(Nth_Subscription)` on the unSubscriber.
+The nth position is '1 based', so the first is the first (and not the item at position 0);
+
+
+```js
+ angular.controller('myController', function(ngstomp) {
+    var vm = this;    
+
+    var unSubscriberFirst = ngstomp
+                        .subscribeTo('/topic/item1')
+                            .callback(receiveFromTopic1)
+                        .and()
+                        .subscribeTo('/topic/item1')
+                            .callback(receiveFromTopic1WithDifferentAction)
+                            .withHeaders({foo : 'bar'})
+                        .connect();
+
+
+    function receiveFromTopic1(m) { vm.items.push(JSON.parse(m.body)); }
+    function receiveFromTopic1WithDifferentAction(m) { console.log(JSON.parse(m.body)); }
+    
+    vm.unSubOfFirst = function() {
+        unSubscriberFirst.unSubscribeNth(1);
+    }
+    
+    vm.unSubOfSecond = function() {
+        unSubscriberSecond.unSubscribeNth(2);
     }
  });
 ```
@@ -227,6 +376,6 @@ This project is totally open-source, and I'll be glad to see Push Request, so Fo
 First of all, I encourage you to read the implementation of the lib, and even the tests. Right now, it's only 200 lines of code (without the test), so it's very simple (read the ES2015 version, not the transpilled version...).
 If it doesn't help, feel free to open a issue on the github, and if I can help, I will try to. 
 
-#### I have another question and it's not in this FAQ
+##### I have another question and it's not in this FAQ
 Like the previous question, open an issue and I will add it to this README (or you can do a PR only on this file).
 
