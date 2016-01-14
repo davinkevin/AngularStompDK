@@ -24,7 +24,6 @@ export default class Unsubscriber {
 
     unSubscribeNth(number) {
         this.$$unSubscribeOf(this.connections[number]);
-        this.connections.splice(number-1, 1);
     }
 
     $$unSubscribeOf(c) {

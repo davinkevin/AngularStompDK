@@ -55,7 +55,7 @@ describe('unSubscriber', () => {
 
         /* Then  */
         expect(ngStomp.spies.$$unSubscribeOf.calls.count()).toBe(1);
-        expect(unSubscriber.connections).toEqual([{queue : 'a', other : 'a'}, {queue : 'b'}, {queue : 'c'}]);
+        expect(unSubscriber.connections.length).toBe(4);
     });
 
 });
