@@ -31,7 +31,7 @@ export default class ngStompWebSocket {
             () => {
                 this.$timeout(() => {
                     this.connect();
-                    this.$reconnectAll()
+                    this.$reconnectAll();
                 }, this.settings.timeOut);
             },
             this.settings.vhost
@@ -135,6 +135,6 @@ export default class ngStompWebSocket {
     }
 
     $$connectionEquality(c1, c2) {
-        return c1.queue === c2.queue && c1.callback === c2.callback && c1.header === c2.header && c1.scope === c2.scope
+        return c1.queue === c2.queue && c1.callback === c2.callback && c1.header === c2.header && c1.scope === c2.scope;
     }
 }

@@ -10,7 +10,7 @@ export default class Unsubscriber {
     }
 
     unSubscribeAll() {
-        this.connections.forEach(c => this.$$unSubscribeOf(c))
+        this.connections.forEach(c => this.$$unSubscribeOf(c));
         this.connections = [];
     }
 

@@ -1,7 +1,8 @@
 /**
  * Created by kevin on 14/12/2015.
  */
-import Unsubscriber from './unSubscriber'
+import UnSubscriber from './unSubscriber';
+import angular from 'angular';
 
 export default class SubscribeBuilder {
 
@@ -50,7 +51,7 @@ export default class SubscribeBuilder {
     connect() {
         this.and();
         this.connections.forEach(c => this.ngStomp.subscribe(c.topic, c.callback, c.headers, c.scope, c.json));
-        return new Unsubscriber(this.ngStomp, this.connections);
+        return new UnSubscriber(this.ngStomp, this.connections);
     }
 
     and() {
