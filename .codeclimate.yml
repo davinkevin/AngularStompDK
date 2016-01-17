@@ -3,6 +3,8 @@ engines:
     enabled: true
 
 exclude_paths:
-- /test/**/*.js
+- /core/**/*.spec.js
 - /dist/**/*.js
+- /build/**/*.js
+- /mock/**/*.js
 - /*.js
