@@ -5,7 +5,7 @@ engines:
 exclude_paths:
 - "core/**/*.spec.js"
 - "dist/*"
-- "build/*"
+- "build/**/*"
 - "mock/**/*.js"
 - "*.js"
 - "*.json"
