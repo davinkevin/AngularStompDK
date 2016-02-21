@@ -16,7 +16,8 @@ gulp.task('build:create-folder', (cal) => mkdirp(paths.release.root, (err) => (e
 gulp.task('build:jspm', (cb) => {
     let options = {
         sourceMaps: true,
-        globalDeps: { angular : 'angular', stompjs : 'Stomp' }
+        globalDeps: { angular : 'angular', stompjs : 'Stomp' },
+        formatHint: true
     };
 
     new jspm.Builder()
