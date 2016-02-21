@@ -1,3 +1,14 @@
+<a name="0.8.1"></a>
+## [0.8.1](https://github.com/davinkevin/AngularStompDK/compare/v0.8.0...v0.8.1) (2016-02-21)
+
+
+### Bug Fixes
+
+* **codeclimate:** fix some issue ([15e5292](https://github.com/davinkevin/AngularStompDK/commit/15e5292))
+* **injection:** change injection of ngAnnotate and not minified with annotation ([12de8c9](https://github.com/davinkevin/AngularStompDK/commit/12de8c9))
+
+
+
 <a name="0.8.0"></a>
 # [0.8.0](https://github.com/davinkevin/AngularStompDK/compare/v0.7.0...v0.8.0) (2016-01-14)
 
