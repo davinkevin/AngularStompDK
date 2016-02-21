@@ -446,7 +446,7 @@
   // etc UMD / module pattern
 })*/
 
-(['1'], ["7","c","7"], function($__System) {
+(['1'], ["6","c","6","6"], function($__System) {
 
 $__System.register("2", ["3", "4"], function (_export) {
     var _createClass, _classCallCheck, Unsubscriber;
@@ -526,16 +526,18 @@ $__System.register("2", ["3", "4"], function (_export) {
         }
     };
 });
-$__System.register('5', ['2', '3', '4'], function (_export) {
-    var Unsubscriber, _createClass, _classCallCheck, SubscribeBuilder;
+$__System.register('5', ['2', '3', '4', '6'], function (_export) {
+    var UnSubscriber, _createClass, _classCallCheck, angular, SubscribeBuilder;
 
     return {
         setters: [function (_3) {
-            Unsubscriber = _3['default'];
+            UnSubscriber = _3['default'];
         }, function (_) {
             _createClass = _['default'];
         }, function (_2) {
             _classCallCheck = _2['default'];
+        }, function (_4) {
+            angular = _4['default'];
         }],
         execute: function () {
             /**
@@ -605,7 +607,7 @@ $__System.register('5', ['2', '3', '4'], function (_export) {
                         this.connections.forEach(function (c) {
                             return _this.ngStomp.subscribe(c.topic, c.callback, c.headers, c.scope, c.json);
                         });
-                        return new Unsubscriber(this.ngStomp, this.connections);
+                        return new UnSubscriber(this.ngStomp, this.connections);
                     }
                 }, {
                     key: 'and',
@@ -622,7 +624,7 @@ $__System.register('5', ['2', '3', '4'], function (_export) {
         }
     };
 });
-$__System.register('6', ['3', '4', '5', '7'], function (_export) {
+$__System.register('7', ['3', '4', '5', '6'], function (_export) {
     var _createClass, _classCallCheck, SubscribeBuilder, angular, ngStompWebSocket;
 
     return {
@@ -928,19 +930,19 @@ $__System.registerDynamic("3", ["a"], true, function($__require, exports, module
   return module.exports;
 });
 
-$__System.register('b', ['3', '4', '6'], function (_export) {
+$__System.register("b", ["3", "4", "7"], function (_export) {
     var _createClass, _classCallCheck, ngStompWebSocket, ngstompProvider;
 
     return {
         setters: [function (_) {
-            _createClass = _['default'];
+            _createClass = _["default"];
         }, function (_2) {
-            _classCallCheck = _2['default'];
+            _classCallCheck = _2["default"];
         }, function (_3) {
-            ngStompWebSocket = _3['default'];
+            ngStompWebSocket = _3["default"];
         }],
         execute: function () {
-            'use strict';
+            "use strict";
 
             ngstompProvider = (function () {
                 function ngstompProvider() {
@@ -956,72 +958,71 @@ $__System.register('b', ['3', '4', '6'], function (_export) {
                 }
 
                 _createClass(ngstompProvider, [{
-                    key: 'credential',
+                    key: "credential",
                     value: function credential(login, password) {
                         this.settings.login = login;
                         this.settings.password = password;
                         return this;
                     }
                 }, {
-                    key: 'url',
+                    key: "url",
                     value: function url(_url) {
                         this.settings.url = _url;
                         return this;
                     }
                 }, {
-                    key: 'class',
+                    key: "class",
                     value: function _class(clazz) {
-                        this.settings['class'] = clazz;
+                        this.settings["class"] = clazz;
                         return this;
                     }
                 }, {
-                    key: 'setting',
+                    key: "setting",
                     value: function setting(settingsObject) {
                         this.settings = settingsObject;
                         return this;
                     }
                 }, {
-                    key: 'debug',
+                    key: "debug",
                     value: function debug(boolean) {
                         this.settings.debug = boolean;
                         return this;
                     }
                 }, {
-                    key: 'vhost',
+                    key: "vhost",
                     value: function vhost(host) {
                         this.settings.vhost = host;
                         return this;
                     }
                 }, {
-                    key: 'reconnectAfter',
+                    key: "reconnectAfter",
                     value: function reconnectAfter(numberInSeconds) {
                         this.settings.timeOut = numberInSeconds * 1000;
                         return this;
                     }
                 }, {
-                    key: 'heartbeat',
+                    key: "heartbeat",
                     value: function heartbeat(outgoing, incoming) {
                         this.settings.heartbeat.outgoing = outgoing;
                         this.settings.heartbeat.incoming = incoming;
                         return this;
                     }
-
-                    /* @ngInject */
                 }, {
-                    key: '$get',
-                    value: function $get($q, $log, $rootScope, $timeout, Stomp) {
+                    key: "$get",
+                    value: ["$q", "$log", "$rootScope", "$timeout", "Stomp", function $get($q, $log, $rootScope, $timeout, Stomp) {
+                        "ngInject";
                         return new ngStompWebSocket(this.settings, $q, $log, $rootScope, $timeout, Stomp);
-                    }
+                    }]
                 }]);
 
                 return ngstompProvider;
             })();
 
-            _export('default', ngstompProvider);
+            _export("default", ngstompProvider);
         }
     };
 });
-$__System.register('1', ['7', 'c', 'b'], function (_export) {
+$__System.register('1', ['6', 'c', 'b'], function (_export) {
     'use strict';
 
     var angular, Stomp, ngstompProvider;
@@ -1040,6 +1041,6 @@ $__System.register('1', ['7', 'c', 'b'], function (_export) {
 });
 })
 (function(factory) {
-  factory(angular, Stomp, angular);
+  factory(angular, Stomp, angular, angular);
 });
 //# sourceMappingURL=angular-stomp.js.map

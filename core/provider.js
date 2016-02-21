@@ -54,8 +54,9 @@ export default class ngstompProvider {
         return this;
     }
 
-    /* @ngInject */
+
     $get($q, $log, $rootScope, $timeout, Stomp) {
+        "ngInject";
         return new ngStompWebSocket(this.settings, $q, $log, $rootScope, $timeout, Stomp);
     }
 }

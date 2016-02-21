@@ -27,8 +27,9 @@ gulp.task('build:jspm', (cb) => {
 
 gulp.task('build:js', () =>
     gulp.src(`${paths.releaseDir}/${paths.app.name}.js`)
-        .pipe(sourcemaps.init({loadMaps: true}))
         .pipe(ngAnnotate())
+        .pipe(gulp.dest(paths.releaseDir))
+        .pipe(sourcemaps.init({loadMaps: true}))
         .pipe(uglify())
         .pipe(rename({suffix: '.min'}))
         .pipe(sourcemaps.write('.'))
