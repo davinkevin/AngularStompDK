@@ -180,6 +180,7 @@ describe('Service', () => {
         });
 
         it('should handle a disconnection', () => {
+            let connectionsCount = ngStomp.connections.length;
             let timeOutreconnectOnError = stompClient.connect.calls.argsFor(0)[3];
             $rootScope.$$phase = true;
 
@@ -190,6 +191,7 @@ describe('Service', () => {
             expect(stompClient.connect.calls.argsFor(1)[0]).toEqual(settings.login);
             expect(stompClient.connect.calls.argsFor(1)[1]).toEqual(settings.password);
             expect(stompClient.connect.calls.argsFor(1)[4]).toEqual(settings.vhost);
+            expect(ngStomp.connections.length).toBe(connectionsCount);
         });
 
     });

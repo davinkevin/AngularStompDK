@@ -451,7 +451,10 @@ $__System.register('a', ['5', '6', '8', '9'], function (_export) {
                     value: function $reconnectAll() {
                         var _this8 = this;
 
-                        this.connections.forEach(function (c) {
+                        var connections = this.connections;
+                        this.connections = [];
+                        // during subscription each connection will be added to this.connections array again
+                        connections.forEach(function (c) {
                             return _this8.subscribe(c.queue, c.callback, c.header, c.scope, c.json);
                         });
                     }

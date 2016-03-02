@@ -119,7 +119,10 @@ export default class ngStompWebSocket {
     }
 
     $reconnectAll() {
-        this.connections.forEach(c => this.subscribe(c.queue, c.callback, c.header, c.scope, c.json));
+        let connections = this.connections;
+        this.connections = [];
+        // during subscription each connection will be added to this.connections array again
+        connections.forEach(c => this.subscribe(c.queue, c.callback, c.header, c.scope, c.json));
     }
 
     $$unSubscribeOf(connection) {
