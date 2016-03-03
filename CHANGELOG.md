@@ -1,3 +1,13 @@
+<a name="0.8.2"></a>
+## [0.8.2](https://github.com/davinkevin/AngularStompDK/compare/v0.8.1...v0.8.2) (2016-03-03)
+
+
+### Bug Fixes
+
+* **reconnect:** fix doubling connections after reconnect ([dda7542](https://github.com/davinkevin/AngularStompDK/commit/dda7542))
+
+
+
 <a name="0.8.1"></a>
 ## [0.8.1](https://github.com/davinkevin/AngularStompDK/compare/v0.8.0...v0.8.1) (2016-02-21)
 
