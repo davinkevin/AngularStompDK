@@ -47,7 +47,7 @@ describe('Service', () => {
         spyOn(stompClient, 'disconnect').and.callThrough();
         spyOn($rootScope, '$apply').and.callThrough();
         spyOn(aConnection, 'unsubscribe').and.callThrough();
-        ngStomp = new NgStomp(settings, $q, $log, $rootScope, $timeout, Stomp);
+        ngStomp = new NgStomp(angular.copy(settings), $q, $log, $rootScope, $timeout, Stomp);
     });
 
     it('should be defined with custom settings', () => {
@@ -179,10 +179,11 @@ describe('Service', () => {
             expect(aPromise).toBe(promise);
         });
 
-        it('should handle a disconnection', () => {
+        it('should handle a disconnection and reconnect after time defined in setting.timeOut if positive', () => {
             let connectionsCount = ngStomp.connections.length;
             let timeOutreconnectOnError = stompClient.connect.calls.argsFor(0)[3];
             $rootScope.$$phase = true;
+
 
             timeOutreconnectOnError();
             $timeout.calls.first().args[0]();
@@ -193,6 +194,19 @@ describe('Service', () => {
             expect(stompClient.connect.calls.argsFor(1)[4]).toEqual(settings.vhost);
             expect(ngStomp.connections.length).toBe(connectionsCount);
         });
+
+        it('should do noting on disconnection because of configuration', () => {
+            let connectionsCount = ngStomp.connections.length;
+            ngStomp.settings.timeOut = -1;
+            let timeOutreconnectOnError = stompClient.connect.calls.argsFor(0)[3];
+            $rootScope.$$phase = true;
+
+            timeOutreconnectOnError();
+
+            expect($timeout).not.toHaveBeenCalled();
+            expect(stompClient.connect).toHaveBeenCalledTimes(1);
+            expect(ngStomp.connections.length).toBe(connectionsCount);
+        })
 
     });
 

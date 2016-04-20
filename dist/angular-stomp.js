@@ -325,7 +325,7 @@ $__System.register('a', ['5', '6', '8', '9'], function (_export) {
                             _this.deferred.resolve();
                             _this.$digestStompAction();
                         }, function () {
-                            _this.$timeout(function () {
+                            _this.settings.timeOut >= 0 && _this.$timeout(function () {
                                 _this.connect();
                                 _this.$reconnectAll();
                             }, _this.settings.timeOut);

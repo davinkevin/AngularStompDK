@@ -29,7 +29,7 @@ export default class ngStompWebSocket {
                 this.$digestStompAction();
             },
             () => {
-                this.$timeout(() => {
+                this.settings.timeOut >= 0 && this.$timeout(() => {
                     this.connect();
                     this.$reconnectAll();
                 }, this.settings.timeOut);
