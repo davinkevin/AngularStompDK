@@ -16,10 +16,10 @@ export default class Unsubscriber {
 
     unSubscribeOf(topic) {
         this.connections
-            .filter(c => c.queue === topic)
+            .filter(c => c.topic === topic || c.queue === topic)
             .forEach(c => this.$$unSubscribeOf(c));
 
-        this.connections = this.connections.filter(c => c.queue !== topic);
+        this.connections = this.connections.filter(c => (!(c.queue === topic || c.topic === topic)));
     }
 
     unSubscribeNth(index) {

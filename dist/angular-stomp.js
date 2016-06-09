@@ -142,13 +142,13 @@ $__System.register("7", ["5", "6"], function (_export) {
                         var _this2 = this;
 
                         this.connections.filter(function (c) {
-                            return c.queue === topic;
+                            return c.topic === topic || c.queue === topic;
                         }).forEach(function (c) {
                             return _this2.$$unSubscribeOf(c);
                         });
 
                         this.connections = this.connections.filter(function (c) {
-                            return c.queue !== topic;
+                            return !(c.queue === topic || c.topic === topic);
                         });
                     }
                 }, {
@@ -597,7 +597,9 @@ $__System.register('1', ['9', 'c', 'b'], function (_export) {
             ngstompProvider = _b['default'];
         }],
         execute: function () {
-            _export('default', angular.module('AngularStompDK', []).provider('ngstomp', ngstompProvider).constant('Stomp', Stomp));
+            _export('default', angular.module('AngularStompDK', []).provider('ngstomp', ngstompProvider)
+            //.provider('ngstomp2', ngstompProvider)
+            .constant('Stomp', Stomp));
         }
     };
 });
