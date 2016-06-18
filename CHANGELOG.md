@@ -1,3 +1,13 @@
+<a name="0.8.4"></a>
+## [0.8.4](https://github.com/davinkevin/AngularStompDK/compare/v0.8.2...v0.8.4) (2016-06-18)
+
+
+### Features
+
+* **reconnection:** disable auto re-connection system if a tiemOut value is less than 0 ([cde3089](https://github.com/davinkevin/AngularStompDK/commit/cde3089))
+
+
+
 <a name="0.8.2"></a>
 ## [0.8.2](https://github.com/davinkevin/AngularStompDK/compare/v0.8.1...v0.8.2) (2016-03-03)
 
