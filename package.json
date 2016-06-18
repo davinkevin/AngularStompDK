@@ -1,8 +1,7 @@
 {
   "name": "AngularStompDK",
-  "version": "0.8.2",
+  "version": "0.8.3",
   "description": "Angular Stomp DK",
-  "main": "dist/angular-stomp",
   "jspm": {
     "dependencies": {
       "angular": "github:angular/bower-angular@^1.4.7",
@@ -50,8 +49,7 @@
     "semver": "^5.0.3"
   },
   "scripts": {
-    "pretest": "npm run build",
-    "postinstall": "jspm install",
+    "pretest": "jspm install && npm run build",
     "build": "gulp build",
     "release": "gulp release --type $(type)",
     "test": "karma start --single-run",
@@ -66,5 +64,6 @@
   "bugs": {
     "url": "https://github.com/davinkevin/AngularStomp/issues"
   },
+  "main": "index.js",
   "homepage": "http://davinkevin.github.io/AngularStompDK/"
 }
