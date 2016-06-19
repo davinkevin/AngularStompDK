@@ -1,3 +1,13 @@
+<a name="0.8.5"></a>
+## [0.8.5](https://github.com/davinkevin/AngularStompDK/compare/v0.8.4...v0.8.5) (2016-06-19)
+
+
+### Bug Fixes
+
+* **unSubscriber:** correction on queue unSubscription ([2194a86](https://github.com/davinkevin/AngularStompDK/commit/2194a86))
+
+
+
 <a name="0.8.4"></a>
 ## [0.8.4](https://github.com/davinkevin/AngularStompDK/compare/v0.8.2...v0.8.4) (2016-06-18)
 
