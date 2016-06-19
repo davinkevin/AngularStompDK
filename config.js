@@ -37,6 +37,7 @@ System.config({
       "util": "npm:util@0.10.3"
     },
     "npm:assert@1.3.0": {
+      "systemjs-json": "github:systemjs/plugin-json@0.1.0",
       "util": "npm:util@0.10.3"
     },
     "npm:babel-runtime@5.8.34": {
@@ -59,7 +60,8 @@ System.config({
     },
     "npm:util@0.10.3": {
       "inherits": "npm:inherits@2.0.1",
-      "process": "github:jspm/nodelibs-process@0.1.2"
+      "process": "github:jspm/nodelibs-process@0.1.2",
+      "systemjs-json": "github:systemjs/plugin-json@0.1.0"
     }
   }
 });

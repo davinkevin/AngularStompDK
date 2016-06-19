@@ -10,7 +10,7 @@ describe('Builder', () => {
     let ngStomp = { subscribe : x => x}, firstTopic = 'aTopic', secondTopic = 'secondTopic';
     let builder;
 
-    let transformToConnection = (topic, callback, headers, scope, json, index) => ({topic : topic, callback : callback, headers : headers, scope : scope, json : json, index : index });
+    let transformToConnection = (queue, callback, headers, scope, json, index) => ({queue : queue, callback : callback, headers : headers, scope : scope, json : json, index : index });
 
     beforeEach(() => {
         spyOn(ngStomp, 'subscribe').and.returnValue(new Builder(ngStomp, secondTopic));
@@ -19,7 +19,7 @@ describe('Builder', () => {
 
     it('should construct a coherent object', () => {
         expect(builder.ngStomp).toBe(ngStomp);
-        expect(builder.topic).toBe(firstTopic);
+        expect(builder.queue).toBe(firstTopic);
     });
 
     it('should subscribe with default parameters', () => {

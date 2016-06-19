@@ -7,11 +7,11 @@ import angular from 'angular';
 export default class SubscribeBuilder {
 
     /*@ngNoInject*/
-    constructor(ngStomp, topic) {
+    constructor(ngStomp, queue) {
         this.ngStomp = ngStomp;
         this.connections = [];
 
-        this.subscribeTo(topic);
+        this.subscribeTo(queue);
     }
 
     callback(aCallback) {
@@ -38,8 +38,8 @@ export default class SubscribeBuilder {
         return this.connect();
     }
 
-    subscribeTo(topic) {
-        this.topic = topic;
+    subscribeTo(queue) {
+        this.queue = queue;
         this.aCallback = angular.noop;
         this.headers = {};
         this.scope = {};
@@ -50,12 +50,12 @@ export default class SubscribeBuilder {
 
     connect() {
         this.and();
-        this.connections.forEach(c => this.ngStomp.subscribe(c.topic, c.callback, c.headers, c.scope, c.json));
+        this.connections.forEach(c => this.ngStomp.subscribe(c.queue, c.callback, c.headers, c.scope, c.json));
         return new UnSubscriber(this.ngStomp, this.connections);
     }
 
     and() {
-        this.connections.push({topic : this.topic, callback : this.aCallback, headers : this.headers, scope : this.scope, json : this.json, index : this.connections.length+1});
+        this.connections.push({queue : this.queue, callback : this.aCallback, headers : this.headers, scope : this.scope, json : this.json, index : this.connections.length+1});
         return this;
     }
 }

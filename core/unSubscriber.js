@@ -14,12 +14,12 @@ export default class Unsubscriber {
         this.connections = [];
     }
 
-    unSubscribeOf(topic) {
+    unSubscribeOf(queue) {
         this.connections
-            .filter(c => c.queue === topic)
+            .filter(c => c.queue === queue)
             .forEach(c => this.$$unSubscribeOf(c));
 
-        this.connections = this.connections.filter(c => c.queue !== topic);
+        this.connections = this.connections.filter(c => c.queue !== queue);
     }
 
     unSubscribeNth(index) {
@@ -31,7 +31,7 @@ export default class Unsubscriber {
     }
 
     $$unSubscribeOf(c) {
-        this.ngStomp.$$unSubscribeOf({ queue: c.topic, callback: c.callback, header: c.headers, scope: c.scope});
+        this.ngStomp.$$unSubscribeOf({ queue: c.queue, callback: c.callback, header: c.headers, scope: c.scope});
     }
 
 }

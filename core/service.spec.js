@@ -108,7 +108,7 @@ describe('Service', () => {
 
     it('should return builder on subscribeTo', () => {
         let builder = ngStomp.subscribeTo('aTopic');
-        expect(builder.topic).toBe('aTopic');
+        expect(builder.queue).toBe('aTopic');
     });
 
     it('should unsubscribe from topic', () => {

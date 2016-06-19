@@ -138,17 +138,17 @@ $__System.register("7", ["5", "6"], function (_export) {
                     }
                 }, {
                     key: "unSubscribeOf",
-                    value: function unSubscribeOf(topic) {
+                    value: function unSubscribeOf(queue) {
                         var _this2 = this;
 
                         this.connections.filter(function (c) {
-                            return c.queue === topic;
+                            return c.queue === queue;
                         }).forEach(function (c) {
                             return _this2.$$unSubscribeOf(c);
                         });
 
                         this.connections = this.connections.filter(function (c) {
-                            return c.queue !== topic;
+                            return c.queue !== queue;
                         });
                     }
                 }, {
@@ -169,7 +169,7 @@ $__System.register("7", ["5", "6"], function (_export) {
                 }, {
                     key: "$$unSubscribeOf",
                     value: function $$unSubscribeOf(c) {
-                        this.ngStomp.$$unSubscribeOf({ queue: c.topic, callback: c.callback, header: c.headers, scope: c.scope });
+                        this.ngStomp.$$unSubscribeOf({ queue: c.queue, callback: c.callback, header: c.headers, scope: c.scope });
                     }
                 }]);
 
@@ -203,13 +203,13 @@ $__System.register('8', ['5', '6', '7', '9'], function (_export) {
 
                 /*@ngNoInject*/
 
-                function SubscribeBuilder(ngStomp, topic) {
+                function SubscribeBuilder(ngStomp, queue) {
                     _classCallCheck(this, SubscribeBuilder);
 
                     this.ngStomp = ngStomp;
                     this.connections = [];
 
-                    this.subscribeTo(topic);
+                    this.subscribeTo(queue);
                 }
 
                 _createClass(SubscribeBuilder, [{
@@ -243,8 +243,8 @@ $__System.register('8', ['5', '6', '7', '9'], function (_export) {
                     }
                 }, {
                     key: 'subscribeTo',
-                    value: function subscribeTo(topic) {
-                        this.topic = topic;
+                    value: function subscribeTo(queue) {
+                        this.queue = queue;
                         this.aCallback = angular.noop;
                         this.headers = {};
                         this.scope = {};
@@ -259,14 +259,14 @@ $__System.register('8', ['5', '6', '7', '9'], function (_export) {
 
                         this.and();
                         this.connections.forEach(function (c) {
-                            return _this.ngStomp.subscribe(c.topic, c.callback, c.headers, c.scope, c.json);
+                            return _this.ngStomp.subscribe(c.queue, c.callback, c.headers, c.scope, c.json);
                         });
                         return new UnSubscriber(this.ngStomp, this.connections);
                     }
                 }, {
                     key: 'and',
                     value: function and() {
-                        this.connections.push({ topic: this.topic, callback: this.aCallback, headers: this.headers, scope: this.scope, json: this.json, index: this.connections.length + 1 });
+                        this.connections.push({ queue: this.queue, callback: this.aCallback, headers: this.headers, scope: this.scope, json: this.json, index: this.connections.length + 1 });
                         return this;
                     }
                 }]);
