@@ -2,6 +2,9 @@ AngularStompDK
 ============
 
 [![Join the chat at https://gitter.im/davinkevin/AngularStompDK](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/davinkevin/AngularStompDK?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
+[![npm version](https://badge.fury.io/js/AngularStompDK.svg)](https://badge.fury.io/js/AngularStompDK)[![Bower version](https://badge.fury.io/bo/AngularStompDK.svg)](https://badge.fury.io/bo/AngularStompDK)
+
 [![Build Status](https://travis-ci.org/davinkevin/AngularStompDK.svg?branch=master)](https://travis-ci.org/davinkevin/AngularStompDK) [![Coverage Status](https://coveralls.io/repos/davinkevin/AngularStompDK/badge.svg?branch=master)](https://coveralls.io/r/davinkevin/AngularStompDK?branch=master) [![Code Climate](https://codeclimate.com/github/davinkevin/AngularStompDK/badges/gpa.svg)](https://codeclimate.com/github/davinkevin/AngularStompDK) 
 
 Angular service to Stomp Websocket Library. 
@@ -29,8 +32,10 @@ And add the dependency to your Angular application :
 ```js
 angular.module('myApp', [ 'AngularStompDK' ])
 ```
+#### 1. 2. NPM
+You can install this package with the standard node package manager, with a  simple `npm install AngularStompDK`
 
-#### 1. 2. ES2015 and more
+#### 1. 3. ES2015 and more
 ----------------
 You can now (since version 0.4.0) import AngularStompDK directly from [JSPM](http://jspm.io/) (Package manager build upon SystemJS) 
 
