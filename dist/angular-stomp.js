@@ -323,7 +323,6 @@ $__System.register('a', ['5', '6', '8', '9'], function (_export) {
                         this.$setConnection();
                         this.stompClient.connect(this.settings.login, this.settings.password, function () {
                             _this.deferred.resolve();
-                            _this.$digestStompAction();
                         }, function () {
                             _this.deferred.reject();
                             _this.settings.timeOut >= 0 && _this.$timeout(function () {
@@ -385,28 +384,26 @@ $__System.register('a', ['5', '6', '8', '9'], function (_export) {
                 }, {
                     key: 'disconnect',
                     value: function disconnect() {
-                        var _this5 = this;
-
                         var disconnectionPromise = this.$q.defer();
                         this.stompClient.disconnect(function () {
                             disconnectionPromise.resolve();
-                            _this5.$digestStompAction();
                         });
 
                         return disconnectionPromise.promise;
                     }
                 }, {
                     key: '$stompSubscribe',
-                    value: function $stompSubscribe(queue, callback, header, scope, bodyInJson) {
-                        var _this6 = this;
+                    value: function $stompSubscribe(queue, callback, header, scope, json) {
+                        if (scope === undefined) scope = this.$rootScope;
 
-                        var subscription = this.stompClient.subscribe(queue, function (message) {
-                            if (bodyInJson) message.body = JSON.parse(message.body);
-                            callback(message);
-                            _this6.$digestStompAction();
+                        var sub = this.stompClient.subscribe(queue, function (message) {
+                            if (json) message.body = JSON.parse(message.body);
+                            scope.$applyAsync(function () {
+                                return callback(message);
+                            });
                         }, header);
 
-                        var connection = { queue: queue, sub: subscription, callback: callback, header: header, scope: scope, json: bodyInJson };
+                        var connection = { queue: queue, sub: sub, callback: callback, header: header, scope: scope, json: json };
                         this.$$addToConnectionQueue(connection);
                         this.$unRegisterScopeOnDestroy(connection);
                     }
@@ -424,11 +421,6 @@ $__System.register('a', ['5', '6', '8', '9'], function (_export) {
                         });
                     }
                 }, {
-                    key: '$digestStompAction',
-                    value: function $digestStompAction() {
-                        !this.$rootScope.$$phase && this.$rootScope.$apply();
-                    }
-                }, {
                     key: '$setConnection',
                     value: function $setConnection() {
                         this.stompClient = this.settings['class'] ? this.Stomp.over(new this.settings['class'](this.settings.url)) : this.Stomp.client(this.settings.url);
@@ -443,37 +435,37 @@ $__System.register('a', ['5', '6', '8', '9'], function (_export) {
                 }, {
                     key: '$unRegisterScopeOnDestroy',
                     value: function $unRegisterScopeOnDestroy(connection) {
-                        var _this7 = this;
+                        var _this5 = this;
 
                         if (connection.scope !== undefined && angular.isFunction(connection.scope.$on)) connection.scope.$on('$destroy', function () {
-                            return _this7.$$unSubscribeOf(connection);
+                            return _this5.$$unSubscribeOf(connection);
                         });
                     }
                 }, {
                     key: '$reconnectAll',
                     value: function $reconnectAll() {
-                        var _this8 = this;
+                        var _this6 = this;
 
                         var connections = this.connections;
                         this.connections = [];
                         // during subscription each connection will be added to this.connections array again
                         connections.forEach(function (c) {
-                            return _this8.subscribe(c.queue, c.callback, c.header, c.scope, c.json);
+                            return _this6.subscribe(c.queue, c.callback, c.header, c.scope, c.json);
                         });
                     }
                 }, {
                     key: '$$unSubscribeOf',
                     value: function $$unSubscribeOf(connection) {
-                        var _this9 = this;
+                        var _this7 = this;
 
                         this.connections.filter(function (c) {
-                            return _this9.$$connectionEquality(c, connection);
+                            return _this7.$$connectionEquality(c, connection);
                         }).forEach(function (c) {
                             return c.sub.unsubscribe();
                         });
 
                         this.connections = this.connections.filter(function (c) {
-                            return !_this9.$$connectionEquality(c, connection);
+                            return !_this7.$$connectionEquality(c, connection);
                         });
                     }
                 }, {

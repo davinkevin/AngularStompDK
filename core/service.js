@@ -26,7 +26,6 @@ export default class ngStompWebSocket {
             this.settings.password,
             () => {
                 this.deferred.resolve();
-                this.$digestStompAction();
             },
             () => {
                 this.deferred.reject();
@@ -75,21 +74,18 @@ export default class ngStompWebSocket {
         let disconnectionPromise = this.$q.defer();
         this.stompClient.disconnect(() => {
             disconnectionPromise.resolve();
-            this.$digestStompAction();
         });
 
         return disconnectionPromise.promise;
     }
 
-    $stompSubscribe(queue, callback, header, scope, bodyInJson) {
-        let subscription = this.stompClient.subscribe(queue, (message) => {
-            if (bodyInJson)
-                message.body = JSON.parse(message.body);
-            callback(message);
-            this.$digestStompAction();
+    $stompSubscribe(queue, callback, header, scope = this.$rootScope, json) {
+        let sub = this.stompClient.subscribe(queue, message => {
+            if (json) message.body = JSON.parse(message.body);
+            scope.$applyAsync(() => callback(message));
         }, header);
 
-        let connection = { queue : queue, sub : subscription, callback : callback, header : header, scope : scope, json : bodyInJson };
+        let connection = { queue, sub, callback, header, scope, json};
         this.$$addToConnectionQueue(connection);
         this.$unRegisterScopeOnDestroy(connection);
     }
@@ -97,13 +93,9 @@ export default class ngStompWebSocket {
     $stompUnSubscribe(queue) {
         this.connections
             .filter(c => c.queue === queue)
-            .forEach((c) => c.sub.unsubscribe());
+            .forEach(c => c.sub.unsubscribe());
 
         this.connections = this.connections.filter(c => c.queue != queue);
-    }
-
-    $digestStompAction() {
-        !this.$rootScope.$$phase && this.$rootScope.$apply();
     }
 
     $setConnection() {

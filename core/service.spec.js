@@ -28,7 +28,7 @@ describe('Service', () => {
         aConnection = { unsubscribe : angular.noop },
         stompClient = { connect : x => x, heartbeat : {}, subscribe : () => aConnection, send : angular.noop, disconnect : func => func() },
         $log = {},
-        $rootScope = { $$phase : false, $apply : angular.noop },
+        $rootScope = { $$phase : false, $apply : angular.noop, $applyAsync : func => func() },
         $timeout;
 
     let ngStomp;
@@ -46,6 +46,7 @@ describe('Service', () => {
         spyOn(stompClient, 'send').and.callThrough();
         spyOn(stompClient, 'disconnect').and.callThrough();
         spyOn($rootScope, '$apply').and.callThrough();
+        spyOn($rootScope, '$applyAsync').and.callThrough();
         spyOn(aConnection, 'unsubscribe').and.callThrough();
         ngStomp = new NgStomp(angular.copy(settings), $q, $log, $rootScope, $timeout, Stomp);
     });
@@ -83,7 +84,7 @@ describe('Service', () => {
             callBack = () => pivotValue = 10;
 
         /* When */
-        ngStomp.subscribe('/topic/foo', callBack, {}, {});
+        ngStomp.subscribe('/topic/foo', callBack, {}, { $applyAsync : func => func() });
         stompClient.subscribe.calls.mostRecent().args[1]();
 
         /* Then */
@@ -97,7 +98,7 @@ describe('Service', () => {
             callBack = (val) => pivotValue = val.body.a;
 
         /* When */
-        ngStomp.subscribe('/topic/foo', callBack, {}, {}, true);
+        ngStomp.subscribe('/topic/foo', callBack, {}, { $applyAsync : func => func() }, true);
         stompClient.subscribe.calls.mostRecent().args[1]({ body : "{ \"a\":10, \"b\":5 }"});
 
         /* Then */
