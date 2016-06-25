@@ -1,3 +1,17 @@
+<a name="0.8.6"></a>
+## [0.8.6](https://github.com/davinkevin/AngularStompDK/compare/v0.8.5...v0.8.6) (2016-06-25)
+
+
+### Bug Fixes
+
+* **subscription:** Lost subscriptions when first connection attempt failed ([a9037df](https://github.com/davinkevin/AngularStompDK/commit/a9037df)), closes [#38](https://github.com/davinkevin/AngularStompDK/issues/38)
+
+### Performance Improvements
+
+* **$digest:** reduce digest cycle and remove call to private method of angular ([3dc3541](https://github.com/davinkevin/AngularStompDK/commit/3dc3541))
+
+
+
 <a name="0.8.5"></a>
 ## [0.8.5](https://github.com/davinkevin/AngularStompDK/compare/v0.8.4...v0.8.5) (2016-06-19)
 
