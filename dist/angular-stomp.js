@@ -325,6 +325,7 @@ $__System.register('a', ['5', '6', '8', '9'], function (_export) {
                             _this.deferred.resolve();
                             _this.$digestStompAction();
                         }, function () {
+                            _this.deferred.reject();
                             _this.settings.timeOut >= 0 && _this.$timeout(function () {
                                 _this.connect();
                                 _this.$reconnectAll();
@@ -334,15 +335,17 @@ $__System.register('a', ['5', '6', '8', '9'], function (_export) {
                     }
                 }, {
                     key: 'subscribe',
-                    value: function subscribe(url, callback, header, scope) {
+                    value: function subscribe(queue, callback, header, scope) {
                         if (header === undefined) header = {};
 
                         var _this2 = this;
 
-                        var bodyInJson = arguments.length <= 4 || arguments[4] === undefined ? false : arguments[4];
+                        var json = arguments.length <= 4 || arguments[4] === undefined ? false : arguments[4];
 
                         this.promiseResult.then(function () {
-                            _this2.$stompSubscribe(url, callback, header, scope, bodyInJson);
+                            return _this2.$stompSubscribe(queue, callback, header, scope, json);
+                        }, function () {
+                            return _this2.$$addToConnectionQueue({ queue: queue, callback: callback, header: header, scope: scope, json: json });
                         });
                         return this;
                     }

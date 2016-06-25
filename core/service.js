@@ -29,6 +29,7 @@ export default class ngStompWebSocket {
                 this.$digestStompAction();
             },
             () => {
+                this.deferred.reject();
                 this.settings.timeOut >= 0 && this.$timeout(() => {
                     this.connect();
                     this.$reconnectAll();
@@ -39,10 +40,13 @@ export default class ngStompWebSocket {
         return this.promiseResult;
     }
 
-    subscribe(url, callback, header = {}, scope, bodyInJson = false) {
-        this.promiseResult.then(() => {
-            this.$stompSubscribe(url, callback, header, scope, bodyInJson);
-        });
+    subscribe(queue, callback, header = {}, scope, json = false) {
+        this.promiseResult
+            .then(
+                () => this.$stompSubscribe(queue, callback, header, scope, json),
+                () => this.$$addToConnectionQueue({ queue, callback, header, scope, json })
+            )
+        ;
         return this;
     }
 

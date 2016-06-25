@@ -105,6 +105,34 @@ describe('Service', () => {
         expect(ngStomp.connections.filter(c => c.queue ==='/topic/foo').length > 0).toBeTruthy();
     });
 
+    describe('with connection failed at boot up', () => {
+
+        let $q = {defer : x => x }, defferedWitchReject = {
+            promise : { then : (_, func) => func() },
+            resolve : angular.noop,
+            reject : angular.noop
+        };
+
+        beforeEach(() => {
+            spyOn($q, 'defer').and.returnValue(defferedWitchReject);
+            spyOn(defferedWitchReject, 'resolve').and.callThrough();
+            spyOn(defferedWitchReject, 'reject').and.callThrough();
+            spyOn(defferedWitchReject.promise, 'then').and.callThrough();
+            ngStomp = new NgStomp(angular.copy(settings), $q, $log, $rootScope, $timeout, Stomp);
+        });
+
+        it('should save connection if connection failed', () => {
+            /* Given */
+            let pivotValue = 0, callBack = (val) => pivotValue = val.body.a;
+            /* When  */
+            ngStomp.subscribe('/topic/foo', callBack, {}, {});
+
+            /* Then  */
+            expect(ngStomp.connections.length).toBe(1);
+        });
+
+    });
+
 
     it('should return builder on subscribeTo', () => {
         let builder = ngStomp.subscribeTo('aTopic');
