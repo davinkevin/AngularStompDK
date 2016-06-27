@@ -31,7 +31,7 @@ export default class Unsubscriber {
     }
 
     $$unSubscribeOf(c) {
-        this.ngStomp.$$unSubscribeOf({ queue: c.queue, callback: c.callback, header: c.headers, scope: c.scope});
+        this.ngStomp.$$unSubscribeOf({ queue: c.queue, callback: c.callback, header: c.headers, scope: c.scope, digest : c.digest});
     }
 
 }

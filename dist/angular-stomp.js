@@ -169,7 +169,7 @@ $__System.register("7", ["5", "6"], function (_export) {
                 }, {
                     key: "$$unSubscribeOf",
                     value: function $$unSubscribeOf(c) {
-                        this.ngStomp.$$unSubscribeOf({ queue: c.queue, callback: c.callback, header: c.headers, scope: c.scope });
+                        this.ngStomp.$$unSubscribeOf({ queue: c.queue, callback: c.callback, header: c.headers, scope: c.scope, digest: c.digest });
                     }
                 }]);
 
@@ -470,7 +470,7 @@ $__System.register('a', ['5', '6', '8', '9'], function (_export) {
                         this.connections = [];
                         // during subscription each connection will be added to this.connections array again
                         connections.forEach(function (c) {
-                            return _this6.subscribe(c.queue, c.callback, c.header, c.scope, c.json);
+                            return _this6.subscribe(c.queue, c.callback, c.header, c.scope, c.json, c.digest);
                         });
                     }
                 }, {
@@ -496,7 +496,7 @@ $__System.register('a', ['5', '6', '8', '9'], function (_export) {
                 }, {
                     key: '$$connectionEquality',
                     value: function $$connectionEquality(c1, c2) {
-                        return c1.queue === c2.queue && c1.callback === c2.callback && c1.header === c2.header && c1.scope === c2.scope;
+                        return c1.queue === c2.queue && c1.callback === c2.callback && c1.header === c2.header && c1.scope === c2.scope && c1.digest === c2.digest;
                     }
                 }]);
 

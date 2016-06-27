@@ -123,7 +123,7 @@ export default class ngStompWebSocket {
         let connections = this.connections;
         this.connections = [];
         // during subscription each connection will be added to this.connections array again
-        connections.forEach(c => this.subscribe(c.queue, c.callback, c.header, c.scope, c.json));
+        connections.forEach(c => this.subscribe(c.queue, c.callback, c.header, c.scope, c.json, c.digest));
     }
 
     $$unSubscribeOf(connection) {
@@ -139,6 +139,10 @@ export default class ngStompWebSocket {
     }
 
     $$connectionEquality(c1, c2) {
-        return c1.queue === c2.queue && c1.callback === c2.callback && c1.header === c2.header && c1.scope === c2.scope;
+        return c1.queue === c2.queue
+            && c1.callback === c2.callback
+            && c1.header === c2.header
+            && c1.scope === c2.scope
+            && c1.digest === c2.digest;
     }
 }
