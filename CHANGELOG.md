@@ -1,3 +1,13 @@
+<a name="0.9.0"></a>
+# [0.9.0](https://github.com/davinkevin/AngularStompDK/compare/v0.8.6...v0.9.0) (2016-06-27)
+
+
+### Features
+
+* **$digest:** possibility to disable automatic digest cycle after a reception of data ([dbec917](https://github.com/davinkevin/AngularStompDK/commit/dbec917)), closes [#36](https://github.com/davinkevin/AngularStompDK/issues/36)
+
+
+
 <a name="0.8.6"></a>
 ## [0.8.6](https://github.com/davinkevin/AngularStompDK/compare/v0.8.5...v0.8.6) (2016-06-25)
 
