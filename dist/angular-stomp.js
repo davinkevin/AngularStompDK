@@ -253,7 +253,7 @@ $__System.register('8', ['5', '6', '7', '9'], function (_export) {
                         this.queue = queue;
                         this.aCallback = angular.noop;
                         this.headers = {};
-                        this.scope = {};
+                        this.scope = undefined;
                         this.json = false;
                         this.digest = true;
 

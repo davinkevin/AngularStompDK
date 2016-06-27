@@ -47,7 +47,7 @@ export default class SubscribeBuilder {
         this.queue = queue;
         this.aCallback = angular.noop;
         this.headers = {};
-        this.scope = {};
+        this.scope = undefined;
         this.json = false;
         this.digest = true;
 

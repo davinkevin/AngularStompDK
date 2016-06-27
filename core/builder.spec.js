@@ -24,7 +24,7 @@ describe('Builder', () => {
 
     it('should subscribe with default parameters', () => {
         builder.build();
-        expect(ngStomp.subscribe.calls.mostRecent().args).toEqual([firstTopic, angular.noop, {}, {}, false, true])
+        expect(ngStomp.subscribe.calls.mostRecent().args).toEqual([firstTopic, angular.noop, {}, undefined, false, true])
     });
 
     it('should subscribe', () => {
@@ -59,11 +59,11 @@ describe('Builder', () => {
         .connect();
 
         expect(ngStomp.subscribe.calls.argsFor(0)).toEqual([firstTopic, aCallback, headers, $scope, false, true]);
-        expect(ngStomp.subscribe.calls.argsFor(1)).toEqual([secondTopic, angular.noop, {}, {}, false, false]);
+        expect(ngStomp.subscribe.calls.argsFor(1)).toEqual([secondTopic, angular.noop, {}, undefined, false, false]);
 
         expect(unSubscriber.connections).toEqual([
             transformToConnection(firstTopic, aCallback, headers, $scope, false, true, 0),
-            transformToConnection(secondTopic, angular.noop, {}, {}, false, false, 1)
+            transformToConnection(secondTopic, angular.noop, {}, undefined, false, false, 1)
         ]);
     });
 
