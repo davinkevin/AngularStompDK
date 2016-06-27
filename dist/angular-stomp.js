@@ -237,6 +237,12 @@ $__System.register('8', ['5', '6', '7', '9'], function (_export) {
                         return this;
                     }
                 }, {
+                    key: 'withDigest',
+                    value: function withDigest(digest) {
+                        this.digest = digest;
+                        return this;
+                    }
+                }, {
                     key: 'build',
                     value: function build() {
                         return this.connect();
@@ -249,6 +255,7 @@ $__System.register('8', ['5', '6', '7', '9'], function (_export) {
                         this.headers = {};
                         this.scope = {};
                         this.json = false;
+                        this.digest = true;
 
                         return this;
                     }
@@ -259,14 +266,22 @@ $__System.register('8', ['5', '6', '7', '9'], function (_export) {
 
                         this.and();
                         this.connections.forEach(function (c) {
-                            return _this.ngStomp.subscribe(c.queue, c.callback, c.headers, c.scope, c.json);
+                            return _this.ngStomp.subscribe(c.queue, c.callback, c.headers, c.scope, c.json, c.digest);
                         });
                         return new UnSubscriber(this.ngStomp, this.connections);
                     }
                 }, {
                     key: 'and',
                     value: function and() {
-                        this.connections.push({ queue: this.queue, callback: this.aCallback, headers: this.headers, scope: this.scope, json: this.json, index: this.connections.length + 1 });
+                        this.connections.push({
+                            queue: this.queue,
+                            callback: this.aCallback,
+                            headers: this.headers,
+                            scope: this.scope,
+                            json: this.json,
+                            digest: this.digest,
+                            index: this.connections.length + 1
+                        });
                         return this;
                     }
                 }]);
@@ -334,17 +349,17 @@ $__System.register('a', ['5', '6', '8', '9'], function (_export) {
                     }
                 }, {
                     key: 'subscribe',
-                    value: function subscribe(queue, callback, header, scope) {
+                    value: function subscribe(queue, callback, header, scope, json, digest) {
                         if (header === undefined) header = {};
 
                         var _this2 = this;
 
-                        var json = arguments.length <= 4 || arguments[4] === undefined ? false : arguments[4];
+                        if (json === undefined) json = false;
 
                         this.promiseResult.then(function () {
-                            return _this2.$stompSubscribe(queue, callback, header, scope, json);
+                            return _this2.$stompSubscribe(queue, callback, header, scope, json, digest);
                         }, function () {
-                            return _this2.$$addToConnectionQueue({ queue: queue, callback: callback, header: header, scope: scope, json: json });
+                            return _this2.$$addToConnectionQueue({ queue: queue, callback: callback, header: header, scope: scope, json: json, digest: digest });
                         });
                         return this;
                     }
@@ -393,17 +408,22 @@ $__System.register('a', ['5', '6', '8', '9'], function (_export) {
                     }
                 }, {
                     key: '$stompSubscribe',
-                    value: function $stompSubscribe(queue, callback, header, scope, json) {
+                    value: function $stompSubscribe(queue, callback, header, scope, json, digest) {
                         if (scope === undefined) scope = this.$rootScope;
 
                         var sub = this.stompClient.subscribe(queue, function (message) {
                             if (json) message.body = JSON.parse(message.body);
-                            scope.$applyAsync(function () {
-                                return callback(message);
-                            });
+
+                            if (digest) {
+                                scope.$applyAsync(function () {
+                                    return callback(message);
+                                });
+                            } else {
+                                callback(message);
+                            }
                         }, header);
 
-                        var connection = { queue: queue, sub: sub, callback: callback, header: header, scope: scope, json: json };
+                        var connection = { queue: queue, sub: sub, callback: callback, header: header, scope: scope, json: json, digest: digest };
                         this.$$addToConnectionQueue(connection);
                         this.$unRegisterScopeOnDestroy(connection);
                     }

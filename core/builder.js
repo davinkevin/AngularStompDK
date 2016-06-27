@@ -34,6 +34,11 @@ export default class SubscribeBuilder {
         return this;
     }
 
+    withDigest(digest) {
+        this.digest = digest;
+        return this;
+    }
+
     build() {
         return this.connect();
     }
@@ -44,18 +49,27 @@ export default class SubscribeBuilder {
         this.headers = {};
         this.scope = {};
         this.json = false;
+        this.digest = true;
 
         return this;
     }
 
     connect() {
         this.and();
-        this.connections.forEach(c => this.ngStomp.subscribe(c.queue, c.callback, c.headers, c.scope, c.json));
+        this.connections.forEach(c => this.ngStomp.subscribe(c.queue, c.callback, c.headers, c.scope, c.json, c.digest));
         return new UnSubscriber(this.ngStomp, this.connections);
     }
 
     and() {
-        this.connections.push({queue : this.queue, callback : this.aCallback, headers : this.headers, scope : this.scope, json : this.json, index : this.connections.length+1});
+        this.connections.push({
+            queue : this.queue, 
+            callback : this.aCallback, 
+            headers : this.headers, 
+            scope : this.scope, 
+            json : this.json,
+            digest : this.digest,
+            index : this.connections.length+1
+        });
         return this;
     }
 }

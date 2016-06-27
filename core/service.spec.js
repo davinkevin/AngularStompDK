@@ -83,13 +83,17 @@ describe('Service', () => {
         let pivotValue = 0,
             callBack = () => pivotValue = 10;
 
+        let $scope = { $applyAsync : func => func() };
+        spyOn($scope, '$applyAsync').and.callThrough();
+
         /* When */
-        ngStomp.subscribe('/topic/foo', callBack, {}, { $applyAsync : func => func() });
+        ngStomp.subscribe('/topic/foo', callBack, {}, $scope, false, true);
         stompClient.subscribe.calls.mostRecent().args[1]();
 
         /* Then */
         expect(pivotValue).toBe(10);
         expect(ngStomp.connections.filter(c => c.queue ==='/topic/foo').length > 0).toBeTruthy();
+        expect($scope.$applyAsync).toHaveBeenCalled();
     });
 
     it('should subscribe with json', () => {
@@ -98,12 +102,29 @@ describe('Service', () => {
             callBack = (val) => pivotValue = val.body.a;
 
         /* When */
-        ngStomp.subscribe('/topic/foo', callBack, {}, { $applyAsync : func => func() }, true);
+        ngStomp.subscribe('/topic/foo', callBack, {}, { $applyAsync : func => func() }, true, true);
         stompClient.subscribe.calls.mostRecent().args[1]({ body : "{ \"a\":10, \"b\":5 }"});
 
         /* Then */
         expect(pivotValue).toBe(10);
         expect(ngStomp.connections.filter(c => c.queue ==='/topic/foo').length > 0).toBeTruthy();
+    });
+
+    it('should subscribe without digest cycle', () => {
+        /* Given */
+        let pivotValue = 0, callBack = (val) => pivotValue = val.body.a;
+        let $scope = { $applyAsync : func => func() };
+        spyOn($scope, '$applyAsync').and.callThrough();
+
+
+        /* When */
+        ngStomp.subscribe('/topic/foo', callBack, {}, $scope, true, false);
+        stompClient.subscribe.calls.mostRecent().args[1]({ body : "{ \"a\":10, \"b\":5 }"});
+
+        /* Then */
+        expect(pivotValue).toBe(10);
+        expect(ngStomp.connections.filter(c => c.queue ==='/topic/foo').length > 0).toBeTruthy()
+        expect($scope.$applyAsync).not.toHaveBeenCalled();
     });
 
     describe('with connection failed at boot up', () => {

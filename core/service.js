@@ -39,11 +39,11 @@ export default class ngStompWebSocket {
         return this.promiseResult;
     }
 
-    subscribe(queue, callback, header = {}, scope, json = false) {
+    subscribe(queue, callback, header = {}, scope, json = false, digest) {
         this.promiseResult
             .then(
-                () => this.$stompSubscribe(queue, callback, header, scope, json),
-                () => this.$$addToConnectionQueue({ queue, callback, header, scope, json })
+                () => this.$stompSubscribe(queue, callback, header, scope, json, digest),
+                () => this.$$addToConnectionQueue({ queue, callback, header, scope, json, digest })
             )
         ;
         return this;
@@ -79,13 +79,18 @@ export default class ngStompWebSocket {
         return disconnectionPromise.promise;
     }
 
-    $stompSubscribe(queue, callback, header, scope = this.$rootScope, json) {
+    $stompSubscribe(queue, callback, header, scope = this.$rootScope, json, digest) {
         let sub = this.stompClient.subscribe(queue, message => {
             if (json) message.body = JSON.parse(message.body);
-            scope.$applyAsync(() => callback(message));
+
+            if (digest) {
+                scope.$applyAsync(() => callback(message));
+            } else {
+                callback(message);
+            }
         }, header);
 
-        let connection = { queue, sub, callback, header, scope, json};
+        let connection = { queue, sub, callback, header, scope, json, digest};
         this.$$addToConnectionQueue(connection);
         this.$unRegisterScopeOnDestroy(connection);
     }

@@ -170,6 +170,26 @@ If the body has to be in JSON, let the library handle the transformation of `mes
  });
 ```
 
+**Since 0.9.0** : You also can disable the digest cycle to be performed after each reception (enabled by default)
+
+```js
+ angular.controller('myController', function($scope, ngstomp) {
+
+    var items = [];
+
+    ngstomp
+        .subscribeTo('/topic/item')
+            .callback(whatToDoWhenMessageComming)
+            .withBodyInJson()
+            .withDigest(false)
+        .connect();
+
+    function whatToDoWhenMessageComming(message) {
+        items.push(message.body);
+    }
+ });
+```
+
 Give to the builder the $scope to allow the system to un-register the connection after the $scope destruction : 
 
 ```js
@@ -186,6 +206,35 @@ Give to the builder the $scope to allow the system to un-register the connection
 
     function whatToDoWhenMessageComming(message) {
         items.push(message.body);
+    }
+ });
+```
+
+Or, in an angular component environment, use the $onDestroy hook to un-register the connection, and thanks to this, you should not need to use the old and ugly $scope : 
+
+```js
+ angular.component('myComp', {
+    bindings : {},
+    controller : function(ngstomp) {
+        
+        this.$onInit = function() {
+            this.items = [];
+        
+            this.unSubscriber = ngstomp
+                .subscribeTo('/topic/item')
+                    .callback(whatToDoWhenMessageComming)
+                    .withBodyInJson()
+                    .bindTo($scope)
+                .connect();    
+            };
+        
+        this.$onDestroy = function() {
+            this.unSubscriber.unSubscribeAll();
+        }
+        
+        this.whatToDoWhenMessageComming = function(message) {
+            items.push(message.body);
+        }
     }
  });
 ```
