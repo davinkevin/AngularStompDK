@@ -1,3 +1,13 @@
+<a name="0.9.1"></a>
+## [0.9.1](https://github.com/davinkevin/AngularStompDK/compare/v0.9.0...v0.9.1) (2016-06-27)
+
+
+### Bug Fixes
+
+* **builder:** define $scope to undefined to fallback on $rootScope ([967d919](https://github.com/davinkevin/AngularStompDK/commit/967d919)), closes [#39](https://github.com/davinkevin/AngularStompDK/issues/39)
+
+
+
 <a name="0.9.0"></a>
 # [0.9.0](https://github.com/davinkevin/AngularStompDK/compare/v0.8.6...v0.9.0) (2016-06-27)
 
