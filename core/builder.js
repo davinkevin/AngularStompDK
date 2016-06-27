@@ -68,7 +68,7 @@ export default class SubscribeBuilder {
             scope : this.scope, 
             json : this.json,
             digest : this.digest,
-            index : this.connections.length+1
+            index : this.connections.length
         });
         return this;
     }

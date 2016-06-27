@@ -280,7 +280,7 @@ $__System.register('8', ['5', '6', '7', '9'], function (_export) {
                             scope: this.scope,
                             json: this.json,
                             digest: this.digest,
-                            index: this.connections.length + 1
+                            index: this.connections.length
                         });
                         return this;
                     }

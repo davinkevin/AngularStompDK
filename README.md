@@ -388,7 +388,7 @@ First one, without doing chaining in subscription :
 ```
 
 The previous version is too verbose and lead to multiple var declaration. You can use the function `unSubscribeNth(Nth_Subscription)` on the unSubscriber.
-The nth position is '1 based', so the first is the first (and not the item at position 0);
+The nth position is '0 based', so the first is 0 (like in an array :D).
 
 
 ```js

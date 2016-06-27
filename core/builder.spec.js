@@ -40,7 +40,7 @@ describe('Builder', () => {
             .connect();
 
         expect(ngStomp.subscribe.calls.mostRecent().args).toEqual([firstTopic, aCallback, headers, $scope, true, true]);
-        expect(unSubscriber.connections).toEqual([transformToConnection(firstTopic, aCallback, headers, $scope, true, true, 1)]);
+        expect(unSubscriber.connections).toEqual([transformToConnection(firstTopic, aCallback, headers, $scope, true, true, 0)]);
     });
 
     it('should subscribe with chaining', () => {
@@ -62,8 +62,8 @@ describe('Builder', () => {
         expect(ngStomp.subscribe.calls.argsFor(1)).toEqual([secondTopic, angular.noop, {}, {}, false, false]);
 
         expect(unSubscriber.connections).toEqual([
-            transformToConnection(firstTopic, aCallback, headers, $scope, false, true, 1),
-            transformToConnection(secondTopic, angular.noop, {}, {}, false, false, 2)
+            transformToConnection(firstTopic, aCallback, headers, $scope, false, true, 0),
+            transformToConnection(secondTopic, angular.noop, {}, {}, false, false, 1)
         ]);
     });
 
