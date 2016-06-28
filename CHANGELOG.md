@@ -1,3 +1,13 @@
+<a name="0.9.2"></a>
+## [0.9.2](https://github.com/davinkevin/AngularStompDK/compare/v0.9.1...v0.9.2) (2016-06-28)
+
+
+### Bug Fixes
+
+* **subscription:** add missing digest parameter ([a0dcb8a](https://github.com/davinkevin/AngularStompDK/commit/a0dcb8a))
+
+
+
 <a name="0.9.1"></a>
 ## [0.9.1](https://github.com/davinkevin/AngularStompDK/compare/v0.9.0...v0.9.1) (2016-06-27)
 
