@@ -53,6 +53,7 @@
     "prebuild": "jspm install",
     "build": "gulp build",
     "release": "gulp release --type $(type)",
+    "postrelease": "npm publish",
     "test": "karma start --single-run",
     "test-tdd": "karma start"
   },

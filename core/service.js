@@ -20,27 +20,39 @@ export default class ngStompWebSocket {
     }
 
     connect() {
+        this.$initConnectionState();
+        this.$connect();
+    }
+
+    $initConnectionState() {
+        this.deferred && this.deferred.reject();
+        this.deferred = this.$q.defer();
+        this.connectionState = this.deferred.promise;
+    }
+
+    $connect() {
         this.$setConnection();
+
         this.stompClient.connect(
             this.settings.login,
             this.settings.password,
-            () => {
-                this.deferred.resolve();
-            },
+            () => this.deferred.resolve(),
             () => {
                 this.deferred.reject();
+                this.$initConnectionState();
                 this.settings.timeOut >= 0 && this.$timeout(() => {
-                    this.connect();
+                    this.$connect();
                     this.$reconnectAll();
                 }, this.settings.timeOut);
             },
             this.settings.vhost
         );
-        return this.promiseResult;
+
+        return this.connectionState;
     }
 
     subscribe(queue, callback, header = {}, scope, json = false, digest) {
-        this.promiseResult
+        this.connectionState
             .then(
                 () => this.$stompSubscribe(queue, callback, header, scope, json, digest),
                 () => this.$$addToConnectionQueue({ queue, callback, header, scope, json, digest })
@@ -55,14 +67,14 @@ export default class ngStompWebSocket {
 
     /* Deprecated */
     unsubscribe(url) {
-        this.promiseResult.then(() => this.$stompUnSubscribe(url));
+        this.connectionState.then(() => this.$stompUnSubscribe(url));
         return this;
     }
 
     send(queue, data, header = {}) {
         let sendDeffered = this.$q.defer();
 
-        this.promiseResult.then(() => {
+        this.connectionState.then(() => {
             this.stompClient.send(queue, header, JSON.stringify(data));
             sendDeffered.resolve();
         });
@@ -110,8 +122,6 @@ export default class ngStompWebSocket {
             this.stompClient.heartbeat.outgoing = this.settings.heartbeat.outgoing;
             this.stompClient.heartbeat.incoming = this.settings.heartbeat.incoming;
         }
-        this.deferred = this.$q.defer();
-        this.promiseResult = this.deferred.promise;
     }
 
     $unRegisterScopeOnDestroy(connection) {
