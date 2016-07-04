@@ -1,3 +1,13 @@
+<a name="0.9.3"></a>
+## [0.9.3](https://github.com/davinkevin/AngularStompDK/compare/v0.9.2...v0.9.3) (2016-07-04)
+
+
+### Features
+
+* **connectionState:** The state of the connection can be accessed by the promise on the ngStomp servic ([7d0e74e](https://github.com/davinkevin/AngularStompDK/commit/7d0e74e))
+
+
+
 <a name="0.9.2"></a>
 ## [0.9.2](https://github.com/davinkevin/AngularStompDK/compare/v0.9.1...v0.9.2) (2016-06-28)
 
