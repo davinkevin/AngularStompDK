@@ -2,15 +2,13 @@ import ngStompWebSocket from './service';
 
 export default class ngstompProvider {
 
-    constructor() {
-        this.settings = {
-            timeOut : 5000,
-            heartbeat : {
-                outgoing : 10000,
-                incoming : 10000
-            }
-        };
-    }
+    settings = {
+        timeOut : 5000,
+        heartbeat : { outgoing: 10000, incoming: 10000},
+        autoConnect : true
+    };
+
+    constructor() {}
 
     credential(login, password) {
         this.settings.login = login;
@@ -54,6 +52,10 @@ export default class ngstompProvider {
         return this;
     }
 
+    autoConnect(autoConnectionDefaultValue) {
+        this.settings.autoConnect = autoConnectionDefaultValue;
+        return this;
+    }
 
     $get($q, $log, $rootScope, $timeout, Stomp) {
         "ngInject";

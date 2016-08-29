@@ -9,8 +9,8 @@ describe('Provider', () => {
 
     let provider,
         Stomp = { client : x => x, over : x => x},
-        $q = { defer : x => x },
-        defered = { promise : 'promise' },
+        $q = { defer : x => x, reject : x => x },
+        defered = { promise : 'promise', reject : x => x},
         stompClient = { connect : x => x, heartbeat : {}},
         $log = {},
         $rootScope = {},
@@ -19,6 +19,7 @@ describe('Provider', () => {
     beforeEach(() => {
         $timeout = jasmine.createSpy('$timeout');
         spyOn($q, 'defer').and.returnValue(defered);
+        spyOn($q, 'reject').and.returnValue(defered);
         spyOn(Stomp, 'client').and.returnValue(stompClient);
         spyOn(Stomp, 'over').and.returnValue(stompClient);
         provider = new Provider();
@@ -32,7 +33,11 @@ describe('Provider', () => {
             .$get($q, $log, $rootScope, $timeout, Stomp);
 
         expect(ngStomp.settings)
-            .toEqual(angular.extend({}, { url : connectionUrl }, { timeOut : 5000, heartbeat : { outgoing : 10000, incoming : 10000 }}));
+            .toEqual(angular.extend(
+                {},
+                { url : connectionUrl },
+                { timeOut : 5000, heartbeat : { outgoing : 10000, incoming : 10000 }, autoConnect : true }
+            ));
     });
 
     it('should be configured by fluent api', () => {
@@ -48,6 +53,7 @@ describe('Provider', () => {
             .debug(true)
             .vhost(vhost)
             .heartbeat(1, 2)
+            .autoConnect(false)
             .$get($q, $log, $rootScope, $timeout, Stomp);
 
         expect(ngStomp.settings).toEqual({
@@ -61,11 +67,18 @@ describe('Provider', () => {
             "heartbeat": {
                 "outgoing": 1,
                 "incoming": 2
-            }
+            },
+            "autoConnect" : false
         });
     });
 
     it('should be configured by settings', () => {
+        let settingsObject = { an : 'object'};
+        provider.setting(settingsObject);
+        expect(settingsObject).toBe(provider.settings);
+    });
+
+    it('should have auto-connect parameter', () => {
         let settingsObject = { an : 'object'};
         provider.setting(settingsObject);
         expect(settingsObject).toBe(provider.settings);

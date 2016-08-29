@@ -327,14 +327,17 @@ $__System.register('a', ['5', '6', '8', '9'], function (_export) {
                     this.$timeout = $timeout;
                     this.connections = [];
 
-                    this.connect();
+                    this.$initConnectionState();
+                    if (settings.autoConnect) {
+                        this.connect();
+                    }
                 }
 
                 _createClass(ngStompWebSocket, [{
                     key: 'connect',
                     value: function connect() {
                         this.$initConnectionState();
-                        this.$connect();
+                        return this.$connect();
                     }
                 }, {
                     key: '$initConnectionState',
@@ -512,6 +515,21 @@ $__System.register('a', ['5', '6', '8', '9'], function (_export) {
                     value: function $$connectionEquality(c1, c2) {
                         return c1.queue === c2.queue && c1.callback === c2.callback && c1.header === c2.header && c1.scope === c2.scope && c1.digest === c2.digest;
                     }
+                }, {
+                    key: 'login',
+                    set: function set(login) {
+                        this.settings.login = login;
+                    }
+                }, {
+                    key: 'password',
+                    set: function set(password) {
+                        this.settings.password = password;
+                    }
+                }, {
+                    key: 'url',
+                    set: function set(url) {
+                        this.settings.url = url;
+                    }
                 }]);
 
                 return ngStompWebSocket;
@@ -541,10 +559,8 @@ $__System.register("b", ["5", "6", "a"], function (_export) {
 
                     this.settings = {
                         timeOut: 5000,
-                        heartbeat: {
-                            outgoing: 10000,
-                            incoming: 10000
-                        }
+                        heartbeat: { outgoing: 10000, incoming: 10000 },
+                        autoConnect: true
                     };
                 }
 
@@ -596,6 +612,12 @@ $__System.register("b", ["5", "6", "a"], function (_export) {
                     value: function heartbeat(outgoing, incoming) {
                         this.settings.heartbeat.outgoing = outgoing;
                         this.settings.heartbeat.incoming = incoming;
+                        return this;
+                    }
+                }, {
+                    key: "autoConnect",
+                    value: function autoConnect(autoConnectionDefaultValue) {
+                        this.settings.autoConnect = autoConnectionDefaultValue;
                         return this;
                     }
                 }, {

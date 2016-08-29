@@ -16,12 +16,15 @@ export default class ngStompWebSocket {
         this.$timeout = $timeout;
         this.connections = [];
 
-        this.connect();
+        this.$initConnectionState();
+        if (settings.autoConnect) {
+            this.connect();
+        }
     }
 
     connect() {
         this.$initConnectionState();
-        this.$connect();
+        return this.$connect();
     }
 
     $initConnectionState() {
@@ -89,6 +92,18 @@ export default class ngStompWebSocket {
         });
 
         return disconnectionPromise.promise;
+    }
+
+    set login(login) {
+        this.settings.login = login;
+    }
+
+    set password(password) {
+        this.settings.password = password;
+    }
+
+    set url(url) {
+        this.settings.url = url;
     }
 
     $stompSubscribe(queue, callback, header, scope = this.$rootScope, json, digest) {

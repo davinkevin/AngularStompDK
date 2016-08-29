@@ -18,11 +18,12 @@ describe('Service', () => {
         "heartbeat": {
             "outgoing": 1,
             "incoming": 2
-        }
+        },
+        "autoConnect" : true
     };
 
     let Stomp = { client : x => x, over : x => x},
-        $q = { defer : x => x },
+        $q = { defer : x => x, reject : x => x },
         promise = { then : func => func() },
         defered = { promise : promise, resolve : angular.noop, reject : angular.noop},
         aConnection = { unsubscribe : angular.noop },
@@ -36,6 +37,7 @@ describe('Service', () => {
     beforeEach(() => {
         $timeout = jasmine.createSpy('$timeout');
         spyOn($q, 'defer').and.returnValue(defered);
+        spyOn($q, 'reject').and.returnValue(defered);
         spyOn(defered, 'resolve').and.callThrough();
         spyOn(defered, 'reject').and.callThrough();
         spyOn(promise, 'then').and.callThrough();
@@ -58,7 +60,8 @@ describe('Service', () => {
             "password": "password",
             "class": angular.noop,
             "debug": true,
-            "vhost": "vhost"
+            "vhost": "vhost",
+            "autoConnect": true
         }, $q, $log, $rootScope, $timeout, Stomp);
         expect(stompClient.connect.calls.argsFor(0)[0]).toEqual(settings.login);
         expect(stompClient.connect.calls.argsFor(0)[1]).toEqual(settings.password);
@@ -260,6 +263,34 @@ describe('Service', () => {
 
     });
 
+    describe('when auto-connect disabled', () => {
 
+        let settingWithoutAutoConnect = {};
+
+        beforeEach(() => {
+            settingWithoutAutoConnect = angular.extend({}, settings, {autoConnect : false});
+            ngStomp = new NgStomp(angular.copy(settingWithoutAutoConnect), $q, $log, $rootScope, $timeout, Stomp);
+        });
+
+        it('should init without connect', () => {
+            expect(Stomp.client).not.toHaveBeenCalled();
+        });
+
+    });
+
+    it('should be able to change login / password / url with service', () => {
+        /* Given */
+        let login = 'foo', password = 'bar', url = 'http://a.fake.url/';
+
+        /* When */
+        ngStomp.login = login;
+        ngStomp.password = password;
+        ngStomp.url = url;
+
+        /* Then */
+        expect(ngStomp.settings.login).toBe(login);
+        expect(ngStomp.settings.password).toBe(password);
+        expect(ngStomp.settings.url).toBe(url);
+    });
 
 });
