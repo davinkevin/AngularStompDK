@@ -1,3 +1,13 @@
+<a name="0.10.0"></a>
+# [0.10.0](https://github.com/davinkevin/AngularStompDK/compare/v0.9.3...v0.10.0) (2016-08-29)
+
+
+### Features
+
+* **config:** being able to configure the credentials / url after angular#config phase ([44692c0](https://github.com/davinkevin/AngularStompDK/commit/44692c0)), closes [#44](https://github.com/davinkevin/AngularStompDK/issues/44)
+
+
+
 <a name="0.9.3"></a>
 ## [0.9.3](https://github.com/davinkevin/AngularStompDK/compare/v0.9.2...v0.9.3) (2016-07-04)
 
