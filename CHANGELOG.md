@@ -1,3 +1,13 @@
+<a name="0.11.0"></a>
+# [0.11.0](https://github.com/davinkevin/AngularStompDK/compare/v0.10.0...v0.11.0) (2016-12-04)
+
+
+### Features
+
+* **connection:** support header during connection ([3484a8c](https://github.com/davinkevin/AngularStompDK/commit/3484a8c)), closes [#47](https://github.com/davinkevin/AngularStompDK/issues/47)
+
+
+
 <a name="0.10.0"></a>
 # [0.10.0](https://github.com/davinkevin/AngularStompDK/compare/v0.9.3...v0.10.0) (2016-08-29)
 
