@@ -36,20 +36,32 @@ export default class ngStompWebSocket {
     $connect() {
         this.$setConnection();
 
-        this.stompClient.connect(
-            this.settings.login,
-            this.settings.password,
-            () => this.deferred.resolve(),
-            () => {
-                this.deferred.reject();
-                this.$initConnectionState();
-                this.settings.timeOut >= 0 && this.$timeout(() => {
-                    this.$connect();
-                    this.$reconnectAll();
-                }, this.settings.timeOut);
-            },
-            this.settings.vhost
-        );
+        let successCallback = () => this.deferred.resolve();
+        let errorCallback = () => {
+            this.deferred.reject();
+            this.$initConnectionState();
+            this.settings.timeOut >= 0 && this.$timeout(() => {
+                this.$connect();
+                this.$reconnectAll();
+            }, this.settings.timeOut);
+        };
+
+        if (angular.isDefined(this.settings.headers)) {
+            this.stompClient.connect(
+                this.settings.headers,
+                successCallback,
+                errorCallback
+            )
+        } else {
+            this.stompClient.connect(
+                this.settings.login,
+                this.settings.password,
+                successCallback,
+                errorCallback,
+                this.settings.vhost
+            );
+        }
+
 
         return this.connectionState;
     }

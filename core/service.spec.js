@@ -50,84 +50,121 @@ describe('Service', () => {
         spyOn($rootScope, '$apply').and.callThrough();
         spyOn($rootScope, '$applyAsync').and.callThrough();
         spyOn(aConnection, 'unsubscribe').and.callThrough();
-        ngStomp = new NgStomp(angular.copy(settings), $q, $log, $rootScope, $timeout, Stomp);
     });
 
-    it('should be defined with custom settings', () => {
-        ngStomp = new NgStomp({
-            "url": "http://connection.com/url",
-            "login": "login",
-            "password": "password",
-            "class": angular.noop,
-            "debug": true,
-            "vhost": "vhost",
-            "autoConnect": true
-        }, $q, $log, $rootScope, $timeout, Stomp);
-        expect(stompClient.connect.calls.argsFor(0)[0]).toEqual(settings.login);
-        expect(stompClient.connect.calls.argsFor(0)[1]).toEqual(settings.password);
-        expect(stompClient.connect.calls.argsFor(0)[4]).toEqual(settings.vhost);
+    describe('connect', () => {
+
+        describe('with login / password', () => {
+
+            beforeEach(() => {
+                ngStomp = new NgStomp(angular.copy(settings), $q, $log, $rootScope, $timeout, Stomp);
+            });
+
+            it('should be defined with custom settings', () => {
+                ngStomp = new NgStomp({
+                    "url": "http://connection.com/url",
+                    "login": "login",
+                    "password": "password",
+                    "class": angular.noop,
+                    "debug": true,
+                    "vhost": "vhost",
+                    "autoConnect": true
+                }, $q, $log, $rootScope, $timeout, Stomp);
+                expect(stompClient.connect.calls.argsFor(0)[0]).toEqual(settings.login);
+                expect(stompClient.connect.calls.argsFor(0)[1]).toEqual(settings.password);
+                expect(stompClient.connect.calls.argsFor(0)[4]).toEqual(settings.vhost);
+            });
+
+            it('should be coherent object', () => {
+                expect(ngStomp).toBeDefined();
+                expect(stompClient.connect.calls.argsFor(0)[0]).toEqual(settings.login);
+                expect(stompClient.connect.calls.argsFor(0)[1]).toEqual(settings.password);
+                expect(stompClient.connect.calls.argsFor(0)[4]).toEqual(settings.vhost);
+            });
+
+            it('should have promise resolved if stomp connected', () => {
+                let success = stompClient.connect.calls.argsFor(0)[2];
+                success();
+                expect(defered.resolve).toHaveBeenCalled();
+            });
+        });
+
+        describe('with headers', () => {
+
+            let settingsWithHeaders = angular.extend({}, settings, {headers: {foo:'Bar'}});
+
+            beforeEach(() => {
+                ngStomp = new NgStomp(settingsWithHeaders, $q, $log, $rootScope, $timeout, Stomp);
+            });
+
+            it('should connect with headers instead of login / password', () => {
+                expect(stompClient.connect.calls.argsFor(0)[0]).toEqual({foo: 'Bar'});
+            });
+
+        });
+
+
     });
 
-    it('should be coherent object', () => {
-        expect(ngStomp).toBeDefined();
-        expect(stompClient.connect.calls.argsFor(0)[0]).toEqual(settings.login);
-        expect(stompClient.connect.calls.argsFor(0)[1]).toEqual(settings.password);
-        expect(stompClient.connect.calls.argsFor(0)[4]).toEqual(settings.vhost);
-    });
+    describe('subscribe', () => {
 
-    it('should resolve in stomp', () => {
-        let success = stompClient.connect.calls.argsFor(0)[2];
-        success();
-        expect(defered.resolve).toHaveBeenCalled();
-    });
+        beforeEach(() => {
+            ngStomp = new NgStomp(angular.copy(settings), $q, $log, $rootScope, $timeout, Stomp);
+        });
 
-    it('should subscribe', () => {
-        /* Given */
-        let pivotValue = 0,
-            callBack = () => pivotValue = 10;
+        it('should subscribe', () => {
+            /* Given */
+            let pivotValue = 0,
+                callBack = () => pivotValue = 10;
 
-        let $scope = { $applyAsync : func => func() };
-        spyOn($scope, '$applyAsync').and.callThrough();
+            let $scope = { $applyAsync : func => func() };
+            spyOn($scope, '$applyAsync').and.callThrough();
 
-        /* When */
-        ngStomp.subscribe('/topic/foo', callBack, {}, $scope, false, true);
-        stompClient.subscribe.calls.mostRecent().args[1]();
+            /* When */
+            ngStomp.subscribe('/topic/foo', callBack, {}, $scope, false, true);
+            stompClient.subscribe.calls.mostRecent().args[1]();
 
-        /* Then */
-        expect(pivotValue).toBe(10);
-        expect(ngStomp.connections.filter(c => c.queue ==='/topic/foo').length > 0).toBeTruthy();
-        expect($scope.$applyAsync).toHaveBeenCalled();
-    });
+            /* Then */
+            expect(pivotValue).toBe(10);
+            expect(ngStomp.connections.filter(c => c.queue ==='/topic/foo').length > 0).toBeTruthy();
+            expect($scope.$applyAsync).toHaveBeenCalled();
+        });
 
-    it('should subscribe with json', () => {
-        /* Given */
-        let pivotValue = 0,
-            callBack = (val) => pivotValue = val.body.a;
+        it('should subscribe with json', () => {
+            /* Given */
+            let pivotValue = 0,
+                callBack = (val) => pivotValue = val.body.a;
 
-        /* When */
-        ngStomp.subscribe('/topic/foo', callBack, {}, { $applyAsync : func => func() }, true, true);
-        stompClient.subscribe.calls.mostRecent().args[1]({ body : "{ \"a\":10, \"b\":5 }"});
+            /* When */
+            ngStomp.subscribe('/topic/foo', callBack, {}, { $applyAsync : func => func() }, true, true);
+            stompClient.subscribe.calls.mostRecent().args[1]({ body : "{ \"a\":10, \"b\":5 }"});
 
-        /* Then */
-        expect(pivotValue).toBe(10);
-        expect(ngStomp.connections.filter(c => c.queue ==='/topic/foo').length > 0).toBeTruthy();
-    });
+            /* Then */
+            expect(pivotValue).toBe(10);
+            expect(ngStomp.connections.filter(c => c.queue ==='/topic/foo').length > 0).toBeTruthy();
+        });
 
-    it('should subscribe without digest cycle', () => {
-        /* Given */
-        let pivotValue = 0, callBack = (val) => pivotValue = val.body.a;
-        let $scope = { $applyAsync : func => func() };
-        spyOn($scope, '$applyAsync').and.callThrough();
+        it('should subscribe without digest cycle', () => {
+            /* Given */
+            let pivotValue = 0, callBack = (val) => pivotValue = val.body.a;
+            let $scope = { $applyAsync : func => func() };
+            spyOn($scope, '$applyAsync').and.callThrough();
 
 
-        /* When */
-        ngStomp.subscribe('/topic/foo', callBack, {}, $scope, true, false);
-        stompClient.subscribe.calls.mostRecent().args[1]({ body : "{ \"a\":10, \"b\":5 }"});
+            /* When */
+            ngStomp.subscribe('/topic/foo', callBack, {}, $scope, true, false);
+            stompClient.subscribe.calls.mostRecent().args[1]({ body : "{ \"a\":10, \"b\":5 }"});
 
-        /* Then */
-        expect(pivotValue).toBe(10);
-        expect(ngStomp.connections.filter(c => c.queue ==='/topic/foo').length > 0).toBeTruthy()
-        expect($scope.$applyAsync).not.toHaveBeenCalled();
+            /* Then */
+            expect(pivotValue).toBe(10);
+            expect(ngStomp.connections.filter(c => c.queue ==='/topic/foo').length > 0).toBeTruthy()
+            expect($scope.$applyAsync).not.toHaveBeenCalled();
+        });
+
+        it('should return builder on subscribeTo', () => {
+            let builder = ngStomp.subscribeTo('aTopic');
+            expect(builder.queue).toBe('aTopic');
+        });
     });
 
     describe('with connection failed at boot up', () => {
@@ -158,55 +195,61 @@ describe('Service', () => {
 
     });
 
+    describe('unsubscribe', () => {
 
-    it('should return builder on subscribeTo', () => {
-        let builder = ngStomp.subscribeTo('aTopic');
-        expect(builder.queue).toBe('aTopic');
+        beforeEach(() => {
+            ngStomp = new NgStomp(angular.copy(settings), $q, $log, $rootScope, $timeout, Stomp);
+        });
+
+        it('should unsubscribe from topic', () => {
+            ngStomp.subscribe('/topic/foo', angular.noop, {}, {});
+            ngStomp.unsubscribe('/topic/foo');
+
+            expect(aConnection.unsubscribe).toHaveBeenCalled();
+        });
+
+        it('should unsubscribe if scope is destroyed', () => {
+            let aScope = { $on : angular.noop };
+            spyOn(aScope, '$on').and.callThrough();
+
+            ngStomp.subscribe('/topic/foo', angular.noop, undefined, aScope);
+            aScope.$on.calls.mostRecent().args[1]();
+
+            expect(aScope.$on).toHaveBeenCalled();
+            expect(aScope.$on.calls.mostRecent().args[0]).toBe('$destroy');
+            expect(aConnection.unsubscribe).toHaveBeenCalled();
+        });
+
+        it('should unsubscribe from unsubscriber', () => {
+            /* Given */
+            let topic = 'foo';
+            let callback1 = x => x, header1 = {}, scope1 = {}, sub1 = jasmine.createSpyObj('sub1', ['unsubscribe']),
+                callback2 = y => y, header2 = {}, scope2 = {}, sub2 = jasmine.createSpyObj('sub2', ['unsubscribe']),
+                callback3 = y => y, header3 = {}, scope3 = {}, sub3 = jasmine.createSpyObj('sub3', ['unsubscribe']);
+
+            ngStomp.connections = [
+                {queue : topic, callback : callback1, header : header1, scope : scope1, sub : sub1},
+                {queue : topic, callback : callback2, header : header2, scope : scope2, sub : sub2},
+                {queue : 'bar', callback : callback3, header : header3, scope : scope3, sub : sub3}
+            ];
+
+            /* When */
+            ngStomp.$$unSubscribeOf({queue : topic, callback : callback2, header : header2, scope : scope2});
+
+            /* Then */
+            expect(sub1.unsubscribe).not.toHaveBeenCalled();
+            expect(sub2.unsubscribe).toHaveBeenCalled();
+            expect(sub3.unsubscribe).not.toHaveBeenCalled();
+            expect(ngStomp.connections.length).toBe(2);
+        });
+
     });
 
-    it('should unsubscribe from topic', () => {
-        ngStomp.subscribe('/topic/foo', angular.noop, {}, {});
-        ngStomp.unsubscribe('/topic/foo');
+    describe('when subscribed', () => {
 
-        expect(aConnection.unsubscribe).toHaveBeenCalled();
-    });
-
-    it('should unsubscribe if scope is destroyed', () => {
-        let aScope = { $on : angular.noop };
-        spyOn(aScope, '$on').and.callThrough();
-
-        ngStomp.subscribe('/topic/foo', angular.noop, undefined, aScope);
-        aScope.$on.calls.mostRecent().args[1]();
-
-        expect(aScope.$on).toHaveBeenCalled();
-        expect(aScope.$on.calls.mostRecent().args[0]).toBe('$destroy');
-        expect(aConnection.unsubscribe).toHaveBeenCalled();
-    });
-
-    it('should unsubscribe from unsubscriber', () => {
-        /* Given */
-        let topic = 'foo';
-        let callback1 = x => x, header1 = {}, scope1 = {}, sub1 = jasmine.createSpyObj('sub1', ['unsubscribe']),
-            callback2 = y => y, header2 = {}, scope2 = {}, sub2 = jasmine.createSpyObj('sub2', ['unsubscribe']),
-            callback3 = y => y, header3 = {}, scope3 = {}, sub3 = jasmine.createSpyObj('sub3', ['unsubscribe']);
-
-        ngStomp.connections = [
-            {queue : topic, callback : callback1, header : header1, scope : scope1, sub : sub1},
-            {queue : topic, callback : callback2, header : header2, scope : scope2, sub : sub2},
-            {queue : 'bar', callback : callback3, header : header3, scope : scope3, sub : sub3}
-        ];
-
-        /* When */
-        ngStomp.$$unSubscribeOf({queue : topic, callback : callback2, header : header2, scope : scope2});
-
-        /* Then */
-        expect(sub1.unsubscribe).not.toHaveBeenCalled();
-        expect(sub2.unsubscribe).toHaveBeenCalled();
-        expect(sub3.unsubscribe).not.toHaveBeenCalled();
-        expect(ngStomp.connections.length).toBe(2);
-    });
-
-    describe('when connected', () => {
+        beforeEach(() => {
+            ngStomp = new NgStomp(angular.copy(settings), $q, $log, $rootScope, $timeout, Stomp);
+        });
 
         beforeEach(() => {
             ngStomp.subscribe('/queue/foo', angular.noop);
@@ -278,19 +321,27 @@ describe('Service', () => {
 
     });
 
-    it('should be able to change login / password / url with service', () => {
-        /* Given */
-        let login = 'foo', password = 'bar', url = 'http://a.fake.url/';
+    describe('configuration', () => {
 
-        /* When */
-        ngStomp.login = login;
-        ngStomp.password = password;
-        ngStomp.url = url;
+        beforeEach(() => {
+            ngStomp = new NgStomp(angular.copy(settings), $q, $log, $rootScope, $timeout, Stomp);
+        });
 
-        /* Then */
-        expect(ngStomp.settings.login).toBe(login);
-        expect(ngStomp.settings.password).toBe(password);
-        expect(ngStomp.settings.url).toBe(url);
+        it('should be able to change login / password / url with service', () => {
+            /* Given */
+            let login = 'foo', password = 'bar', url = 'http://a.fake.url/';
+
+            /* When */
+            ngStomp.login = login;
+            ngStomp.password = password;
+            ngStomp.url = url;
+
+            /* Then */
+            expect(ngStomp.settings.login).toBe(login);
+            expect(ngStomp.settings.password).toBe(password);
+            expect(ngStomp.settings.url).toBe(url);
+        });
     });
+
 
 });

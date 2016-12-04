@@ -353,16 +353,23 @@ $__System.register('a', ['5', '6', '8', '9'], function (_export) {
 
                         this.$setConnection();
 
-                        this.stompClient.connect(this.settings.login, this.settings.password, function () {
+                        var successCallback = function successCallback() {
                             return _this.deferred.resolve();
-                        }, function () {
+                        };
+                        var errorCallback = function errorCallback() {
                             _this.deferred.reject();
                             _this.$initConnectionState();
                             _this.settings.timeOut >= 0 && _this.$timeout(function () {
                                 _this.$connect();
                                 _this.$reconnectAll();
                             }, _this.settings.timeOut);
-                        }, this.settings.vhost);
+                        };
+
+                        if (angular.isDefined(this.settings.headers)) {
+                            this.stompClient.connect(this.settings.headers, successCallback, errorCallback);
+                        } else {
+                            this.stompClient.connect(this.settings.login, this.settings.password, successCallback, errorCallback, this.settings.vhost);
+                        }
 
                         return this.connectionState;
                     }
@@ -618,6 +625,12 @@ $__System.register("b", ["5", "6", "a"], function (_export) {
                     key: "autoConnect",
                     value: function autoConnect(autoConnectionDefaultValue) {
                         this.settings.autoConnect = autoConnectionDefaultValue;
+                        return this;
+                    }
+                }, {
+                    key: "headers",
+                    value: function headers(_headers) {
+                        this.settings.headers = _headers;
                         return this;
                     }
                 }, {

@@ -6,7 +6,6 @@ import uglify from 'gulp-uglify';
 import rename from 'gulp-rename';
 import runSequence from 'run-sequence';
 import del from 'del';
-import gzip from 'gulp-gzip';
 import mkdirp from 'mkdirp';
 import paths from '../paths';
 

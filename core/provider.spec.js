@@ -43,7 +43,8 @@ describe('Provider', () => {
     it('should be configured by fluent api', () => {
         const connectionUrl = '/anotherUrl',
             login = 'login', password = 'password',
-            vhost = 'vhost';
+            vhost = 'vhost',
+            headers = {foo: 'bar'};
 
         let ngStomp = provider
             .url(connectionUrl)
@@ -54,6 +55,7 @@ describe('Provider', () => {
             .vhost(vhost)
             .heartbeat(1, 2)
             .autoConnect(false)
+            .headers(headers)
             .$get($q, $log, $rootScope, $timeout, Stomp);
 
         expect(ngStomp.settings).toEqual({
@@ -68,6 +70,7 @@ describe('Provider', () => {
                 "outgoing": 1,
                 "incoming": 2
             },
+            "headers": headers,
             "autoConnect" : false
         });
     });

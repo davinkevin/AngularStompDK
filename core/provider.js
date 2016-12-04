@@ -57,6 +57,11 @@ export default class ngstompProvider {
         return this;
     }
 
+    headers(headers) {
+        this.settings.headers = headers;
+        return this;
+    }
+
     $get($q, $log, $rootScope, $timeout, Stomp) {
         "ngInject";
         return new ngStompWebSocket(this.settings, $q, $log, $rootScope, $timeout, Stomp);
